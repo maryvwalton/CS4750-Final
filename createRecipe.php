@@ -1,70 +1,65 @@
 <?php
-require("connect-db.php");
-require("recipe-db.php");
+  require("connect-db.php");
+  require("recipe-db.php");
 
-error_reporting(E_ALL);
-ini_set('display_errors', '1');
+  error_reporting(E_ALL);
+  ini_set('display_errors', '1');
 
-session_start(); // Start the session
+  session_start();
 
-if (!isset($_SESSION['user_id'])) {
-  // User is not logged in, redirect to login page
-  header("Location: index.html");
-  exit();
-}
-
-// Check if the form is submitted
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-
-  // add the recipe to the table and get the recipe id
-  $recipeId = createRecipe($_POST['recipe_title'], $_POST['recipe_description']);
-
-
-
-  // Process directions
-  $instructions = $_POST['instruction'];
-
-  foreach ($instructions as $index => $instruction) {
-    insertInstruction($recipeId, $instruction);
-  } 
-  
-  // Process ingredients
-  $ingredientNames = $_POST['ingredient_name'];
-  $amounts = $_POST['amount'];
-  $units = $_POST['unit'];
-
-  foreach ($ingredientNames as $index => $ingredientName) {
-    // add ingredient to table and get id
-    $ingredientID = insertIngredient($recipeId, $ingredientName);
-
-    // Insert ingredient amounts into the 'ingredients_amounts' table
-    $insertAmountQuery = "INSERT INTO `ingredients_amounts` (`recipe_id`, `ingredient_id`, `unit`, `value`) 
-    VALUES (:recipe_id, :ingredient_id, :unit, :value)";
-    $statement = $db->prepare($insertAmountQuery);
-    $statement->bindValue(':recipe_id', $recipeId);
-    $statement->bindValue(':ingredient_id', $ingredientID);
-    $statement->bindValue(':unit', $units[$index]);
-    $statement->bindValue(':value', $amounts[$index]);
-    $statement->execute();
+  // check if user is logged in
+  if (!isset($_SESSION['user_id'])) {
+    header("Location: index.html");
+    exit();
   }
 
-  // Process tags
-  $tagNames = $_POST['tag_name'];
-  $tagTypes = $_POST['type'];
+  if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-  foreach ($tagNames as $index => $tagName) {
-      // add tag to the 'tags' table
-      insertTag($recipeId, $tagName, $tagTypes[$index]);
+    // add the recipe to the table and get the recipe id
+    $recipeId = createRecipe($_POST['recipe_title'], $_POST['recipe_description']);
+
+
+    // Process directions
+    $instructions = $_POST['instruction'];
+    foreach ($instructions as $index => $instruction) {
+      insertInstruction($recipeId, $instruction);
+    } 
+    
+    // Process ingredients
+    $ingredientNames = $_POST['ingredient_name'];
+    $amounts = $_POST['amount'];
+    $units = $_POST['unit'];
+    foreach ($ingredientNames as $index => $ingredientName) {
+      // add ingredient to table and get id
+      $ingredientID = insertIngredient($recipeId, $ingredientName);
+
+      // Insert ingredient amounts into the 'ingredients_amounts' table
+      $insertAmountQuery = "INSERT INTO `ingredients_amounts` (`recipe_id`, `ingredient_id`, `unit`, `value`) 
+      VALUES (:recipe_id, :ingredient_id, :unit, :value)";
+      $statement = $db->prepare($insertAmountQuery);
+      $statement->bindValue(':recipe_id', $recipeId);
+      $statement->bindValue(':ingredient_id', $ingredientID);
+      $statement->bindValue(':unit', $units[$index]);
+      $statement->bindValue(':value', $amounts[$index]);
+      $statement->execute();
+    }
+
+    // Process tags
+    $tagNames = $_POST['tag_name'];
+    $tagTypes = $_POST['type'];
+    foreach ($tagNames as $index => $tagName) {
+        // add tag to the 'tags' table
+        insertTag($recipeId, $tagName, $tagTypes[$index]);
+    }
+
+    // add recipe to created_by table
+    createdBy($recipeId, $_SESSION['user_id']);
+
+    // Redirect to a success page or any other page you want
+    header("Location: profile.php");
+    exit();
   }
-
-  createdBy($recipeId, $_SESSION['user_id']);
-  // Redirect to a success page or any other page you want
-  header("Location: profile.php");
-  exit();
-}
 ?>
-
-
 
 
 <!-- 1. create HTML5 doctype -->
@@ -106,8 +101,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 </head>
 
 <body>
-   <!-- Navigation bar KEEP -->
-   <nav class="navbar navbar-expand-lg bg-light">
+  <!-- Navigation bar KEEP -->
+  <nav class="navbar navbar-expand-lg bg-light">
     <div class="container-fluid">
         <a class="navbar-brand text-black">Chef Your Way</a>
         <a class=nav-link href="search.php">Search</a>
@@ -140,16 +135,19 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <div class="text-center">
       <h2>Create Recipe</h2>
       <form action="createRecipe.php" method="post">
-          <label for="recipe_title">Title:</label>
-          <input type="text" name="recipe_title" required>
-          <br>
-          <br>
 
-          <label for="recipe_description">Description:</label>
-          <textarea name="recipe_description" rows="4" required></textarea>
+        <!-- Title -->
+        <label for="recipe_title">Title:</label>
+        <input type="text" name="recipe_title" required>
+        <!-- end title -->
 
-      <!-- Ingredients section -->
-      <div class="ingredient-section">
+        <!-- Description -->
+        <label for="recipe_description">Description:</label>
+        <textarea name="recipe_description" rows="4" required></textarea>
+        <!-- end descripton -->
+
+        <!-- Ingredients section -->
+        <div class="ingredient-section">
           <h3>Ingredients:</h3>
           <div class="ingredient-inputs">
             <label for="ingredient_name">Ingredient Name:</label>
@@ -184,11 +182,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </select>
             <button class="btn btn-primary" type="button" onclick="addIngredient()">Add Ingredient</button>
           </div>
-      </div>
-      <!-- end ingredients -->
+        </div>
+        <!-- end ingredients -->
 
-      <!-- Directions section -->
-      <div class="direction-section">
+        <!-- Directions section -->
+        <div class="direction-section">
           <h3>Directions:</h3>
           <div class="direction-inputs">
             <label for="instruction">Instruction:</label>
@@ -196,57 +194,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <button class="btn btn-primary" type="button" onclick="addDirection()">Add Instruction</button>
           </div>
         </div>
-      
-      <!-- end directions -->
+        <!-- end directions -->
 
         <!-- Tags section -->
-          <div class="tags-section">
-              <h3>Tags:</h3>
-              <div class="tags-inputs">
-                  <label for="tag_name">Tag Name:</label>
-                  <input type="text" name="tag_name[]">
+        <div class="tags-section">
+          <h3>Tags:</h3>
+          <div class="tags-inputs">
+            <label for="tag_name">Tag Name:</label>
+            <input type="text" name="tag_name[]">
 
-                  <label for="type">Tag Type:</label>
-                  <select name="type[]">
-                      <option value="dietary restrictions">Dietary Restrictions</option>
-                      <option value="country of origin">Country of Origin</option>
-                      <option value="category">Category</option>
-                  </select>
+            <label for="type">Tag Type:</label>
+            <select name="type[]">
+              <option value="dietary restrictions">Dietary Restrictions</option>
+              <option value="country of origin">Country of Origin</option>
+              <option value="category">Category</option>
+            </select>
 
-                  <button class="btn btn-primary" type="button" onclick="addTag()">Add Tag</button>
-              </div>
+            <button class="btn btn-primary" type="button" onclick="addTag()">Add Tag</button>
           </div>
+        </div>
         <!-- End tags -->
 
         <button class="btn btn-success" type="submit">Create Recipe</button>
       </form>
     </div>
-
-    <script>
-      function addIngredient() {
-        // Clone the existing ingredient input fields and append them under the ingredient section
-        const ingredientInputs = document.querySelector('.ingredient-section .ingredient-inputs');
-        const newIngredientInputs = ingredientInputs.cloneNode(true);
-        document.querySelector('.ingredient-section').appendChild(newIngredientInputs);
-      }
-  
-      function addDirection() {
-        // Clone the existing direction input fields and append them under the direction section
-        const directionInputs = document.querySelector('.direction-section .direction-inputs');
-        const newDirectionInputs = directionInputs.cloneNode(true);
-        document.querySelector('.direction-section').appendChild(newDirectionInputs);
-      }
-
-      function addTag() {
-        // Clone the existing tag input fields and append them under the tags section
-        const tagsInputs = document.querySelector('.tags-section .tags-inputs');
-        const newTagsInputs = tagsInputs.cloneNode(true);
-        document.querySelector('.tags-section').appendChild(newTagsInputs);
-    }
-    </script>
-
-    <!-- end form -->
-
+    <!-- end recipe form -->
 
   </div>
   <!-- end main page content -->
@@ -261,10 +233,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   </footer>
   <!-- end footer -->
 
-
 </body>
 
 <script>
+  function addIngredient() {
+    // Clone the existing ingredient input fields and append them under the ingredient section
+    const ingredientInputs = document.querySelector('.ingredient-section .ingredient-inputs');
+    const newIngredientInputs = ingredientInputs.cloneNode(true);
+    document.querySelector('.ingredient-section').appendChild(newIngredientInputs);
+  }
+  
+  function addDirection() {
+    // Clone the existing direction input fields and append them under the direction section
+    const directionInputs = document.querySelector('.direction-section .direction-inputs');
+    const newDirectionInputs = directionInputs.cloneNode(true);
+    document.querySelector('.direction-section').appendChild(newDirectionInputs);
+  }
+
+  function addTag() {
+    // Clone the existing tag input fields and append them under the tags section
+    const tagsInputs = document.querySelector('.tags-section .tags-inputs');
+    const newTagsInputs = tagsInputs.cloneNode(true);
+    document.querySelector('.tags-section').appendChild(newTagsInputs);
+  }
 </script>
 
 </html>
