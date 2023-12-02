@@ -73,7 +73,8 @@
           echo $result;
       }
       // Note: If createUser is successful, the user is already logged in and redirected.
-  }
+      
+    }
   
   ?>
 
