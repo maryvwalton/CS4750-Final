@@ -1,9 +1,8 @@
 <?php
-  session_start();
-
   require("connect-db.php");
   require("recipe-db.php");
-
+  
+  session_start();
 
   if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['loginBtn'])) {
     userLogin();
