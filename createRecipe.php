@@ -48,6 +48,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $statement->execute();
   }
 
+  // Process tags
+  $tagNames = $_POST['tag_name'];
+  $tagTypes = $_POST['type'];
+
+  foreach ($tagNames as $index => $tagName) {
+      // add tag to the 'tags' table
+      insertTag($recipeId, $tagName, $tagTypes[$index]);
+  }
+
   createdBy($recipeId, $_SESSION['user_id']);
   // Redirect to a success page or any other page you want
   header("Location: profile.php");
@@ -147,7 +156,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <input type="text" name="ingredient_name[]" required>
   
             <label for="amount">Amount:</label>
-            <input type="text" name="amount[]" required>
+            <input type="number" name="amount[]" required>
   
             <label for="unit">Unit:</label>
             <select name="unit[]" required>
@@ -190,7 +199,26 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       
       <!-- end directions -->
 
-          <button class="btn btn-success" type="submit">Create Recipe</button>
+        <!-- Tags section -->
+          <div class="tags-section">
+              <h3>Tags:</h3>
+              <div class="tags-inputs">
+                  <label for="tag_name">Tag Name:</label>
+                  <input type="text" name="tag_name[]">
+
+                  <label for="type">Tag Type:</label>
+                  <select name="type[]">
+                      <option value="dietary restrictions">Dietary Restrictions</option>
+                      <option value="country of origin">Country of Origin</option>
+                      <option value="category">Category</option>
+                  </select>
+
+                  <button class="btn btn-primary" type="button" onclick="addTag()">Add Tag</button>
+              </div>
+          </div>
+        <!-- End tags -->
+
+        <button class="btn btn-success" type="submit">Create Recipe</button>
       </form>
     </div>
 
@@ -208,6 +236,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         const newDirectionInputs = directionInputs.cloneNode(true);
         document.querySelector('.direction-section').appendChild(newDirectionInputs);
       }
+
+      function addTag() {
+        // Clone the existing tag input fields and append them under the tags section
+        const tagsInputs = document.querySelector('.tags-section .tags-inputs');
+        const newTagsInputs = tagsInputs.cloneNode(true);
+        document.querySelector('.tags-section').appendChild(newTagsInputs);
+    }
     </script>
 
     <!-- end form -->

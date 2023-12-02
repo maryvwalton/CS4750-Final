@@ -35,6 +35,14 @@ if (isset($_GET['recipe_id'])) {
     $statementIngredients->execute();
     $recipeIngredients = $statementIngredients->fetchAll(PDO::FETCH_ASSOC);
     $statementIngredients->closeCursor();
+
+    // Fetch the tags of the selected recipe
+    $queryTags = "SELECT tag_name FROM tags WHERE recipe_id = :recipe_id";
+    $statementTags = $db->prepare($queryTags);
+    $statementTags->bindValue(':recipe_id', $recipeId);
+    $statementTags->execute();
+    $recipeTags = $statementTags->fetchAll(PDO::FETCH_ASSOC);
+    $statementTags->closeCursor();
 } else {
     // Redirect to the search page if recipe_id is not set
     header("Location: search.php");
@@ -125,6 +133,19 @@ if (isset($_GET['recipe_id'])) {
                     <li class="list-group-item"><?php echo $instruction['instruction']; ?></li>
                 <?php } ?>
             </ol>
+
+            <!-- Display Tags -->
+            <h2>Tags:</h2>
+            <?php if (!empty($recipeTags)) { ?>
+                <ul>
+                    <?php foreach ($recipeTags as $tag) { ?>
+                        <li><?php echo $tag['tag_name']; ?></li>
+                    <?php } ?>
+                </ul>
+            <?php } else { ?>
+                <p>No tags found for this recipe.</p>
+            <?php } ?>
+            
         <?php } else { ?>
             <p>No recipe details found.</p>
         <?php } ?>

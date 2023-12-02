@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost
--- Generation Time: Dec 01, 2023 at 08:37 PM
+-- Generation Time: Dec 01, 2023 at 10:42 PM
 -- Server version: 10.6.12-MariaDB-0ubuntu0.22.04.1
 -- PHP Version: 8.1.2-1ubuntu2.14
 
@@ -56,7 +56,7 @@ INSERT INTO `created_by` (`recipe_id`, `user_id`) VALUES
 (19, 1),
 (20, 1),
 (21, 1),
-(29, 12);
+(33, 12);
 
 -- --------------------------------------------------------
 
@@ -114,9 +114,21 @@ INSERT INTO `ingredients_amounts` (`recipe_id`, `ingredient_id`, `amount_id`, `u
 (13, 37, 35, 'pack', 1),
 (13, 38, 36, 'cups', 1),
 (13, 39, 37, 'cups', 2),
-(29, 55, 53, 'whole', 2),
-(29, 56, 54, 'ounces', 10),
-(29, 57, 55, 'teaspoons', 3);
+(31, 59, 57, 'pounds', 2),
+(31, 60, 58, 'tablespoons', 6),
+(31, 61, 59, 'tablespoons', 4),
+(31, 62, 60, 'pieces', 5),
+(31, 63, 61, 'cups', 1),
+(32, 64, 62, 'pounds', 2),
+(32, 65, 63, 'tablespoons', 6),
+(32, 66, 64, 'tablespoons', 4),
+(32, 67, 65, 'pieces', 5),
+(32, 68, 66, 'cups', 1),
+(33, 69, 67, 'pounds', 2),
+(33, 70, 68, 'tablespoons', 6),
+(33, 71, 69, 'tablespoons', 4),
+(33, 72, 70, 'pieces', 5),
+(33, 73, 71, 'cups', 1);
 
 --
 -- Triggers `ingredients_amounts`
@@ -209,8 +221,7 @@ INSERT INTO `recipe` (`recipe_id`, `title`, `description`) VALUES
 (19, 'test table name recipe_directions', 'werwerwerwe'),
 (20, 'test table name recipe_directions', 'werwer'),
 (21, 'test for video', 'wewer'),
-(23, 'Chicken Adobo', 'test'),
-(29, 'Fries', 'Crispy, Salty Fries');
+(33, 'Chicken Adobo', 'Juicy chicken marinated in soy sauce, vinegar, and garlic. ');
 
 -- --------------------------------------------------------
 
@@ -271,9 +282,15 @@ INSERT INTO `recipe_directions` (`recipe_id`, `direction_id`, `instruction`) VAL
 (19, 40, 'werwerwer'),
 (20, 41, 'werwerwer'),
 (21, 42, 'qweqwe'),
-(29, 53, 'Cut and peel potatoes. '),
-(29, 54, 'Heat up oil to 100 degrees celcius. Fry potatoes.'),
-(29, 55, 'Take potatoes out of oil and sprinkle salt.');
+(31, 58, 'Finely mince garlic and add it to a bag with the soy sauce, vinegar, and chicken. Marinate for 1 hour.'),
+(31, 59, 'Sear chicken in pot, then add marinade and water. Simmer for 45 minutes'),
+(31, 60, 'Serve over white rice and enjoy!'),
+(32, 61, 'Finely mince garlic and add it to a bag with the soy sauce, vinegar, and chicken. Marinate for 1 hour.'),
+(32, 62, 'Sear chicken in pot until brown, then add marinade and water and simmer for 45 minutes.'),
+(32, 63, 'Serve over white rice and enjoy!'),
+(33, 64, 'Finely mince garlic and add it to a bag with the soy sauce, vinegar, and chicken. Marinate for 1 hour.'),
+(33, 65, 'Sear chicken until brown, then add marinade and water and simmer for 45 minutes.'),
+(33, 66, 'Serve over white rice and enjoy!');
 
 -- --------------------------------------------------------
 
@@ -334,9 +351,21 @@ INSERT INTO `recipe_ingredients` (`recipe_id`, `ingredient_id`, `ingredient_name
 (20, 40, 'werkwe'),
 (21, 41, 'werkwe'),
 (23, 45, 'Chicken'),
-(29, 55, 'Potato'),
-(29, 56, 'Oil'),
-(29, 57, 'Salt');
+(31, 59, 'Chicken'),
+(31, 60, 'Soy Sauce'),
+(31, 61, 'Cane Vinegar'),
+(31, 62, 'Garlic'),
+(31, 63, 'Water'),
+(32, 64, 'Chicken'),
+(32, 65, 'Soy Sauce'),
+(32, 66, 'Vinegar'),
+(32, 67, 'Garlic'),
+(32, 68, 'Water'),
+(33, 69, 'Chicken'),
+(33, 70, 'Soy Sauce'),
+(33, 71, 'Vinegar'),
+(33, 72, 'Garlic'),
+(33, 73, 'Water');
 
 -- --------------------------------------------------------
 
@@ -383,7 +412,11 @@ INSERT INTO `tags` (`recipe_id`, `tag_id`, `tag_name`, `type`) VALUES
 (13, 25, 'Dessert', 'category'),
 (13, 26, 'American', 'country of origin'),
 (20, 27, 'wer', 'country of origin'),
-(21, 28, 'wer', 'country of origin');
+(21, 28, 'wer', 'country of origin'),
+(32, 30, 'Gluten-Free', 'dietary restrictions'),
+(33, 31, 'Gluten-Free', 'dietary restrictions'),
+(33, 32, 'Philippines', 'country of origin'),
+(33, 33, 'Entree', 'category');
 
 -- --------------------------------------------------------
 
@@ -514,7 +547,7 @@ ALTER TABLE `user_stats`
 -- AUTO_INCREMENT for table `ingredients_amounts`
 --
 ALTER TABLE `ingredients_amounts`
-  MODIFY `amount_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=57;
+  MODIFY `amount_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
 
 --
 -- AUTO_INCREMENT for table `ingredients_amounts_audit`
@@ -526,25 +559,25 @@ ALTER TABLE `ingredients_amounts_audit`
 -- AUTO_INCREMENT for table `recipe`
 --
 ALTER TABLE `recipe`
-  MODIFY `recipe_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
+  MODIFY `recipe_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=35;
 
 --
 -- AUTO_INCREMENT for table `recipe_directions`
 --
 ALTER TABLE `recipe_directions`
-  MODIFY `direction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=58;
+  MODIFY `direction_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=70;
 
 --
 -- AUTO_INCREMENT for table `recipe_ingredients`
 --
 ALTER TABLE `recipe_ingredients`
-  MODIFY `ingredient_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=59;
+  MODIFY `ingredient_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=77;
 
 --
 -- AUTO_INCREMENT for table `tags`
 --
 ALTER TABLE `tags`
-  MODIFY `tag_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `tag_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT for table `user`

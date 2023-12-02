@@ -146,4 +146,30 @@ function createdBy ($recipeId, $userId) {
     $statement->closeCursor();
 }
 
+function insertTag($recipeId, $tagName, $tagType) {
+    global $db;
+
+    $query = "INSERT INTO `tags` (`recipe_id`, `tag_name`, `type`) VALUES (:recipe_id, :tag_name, :type)";
+    $statement = $db->prepare($query);
+    $statement->bindValue(':recipe_id', $recipeId);
+    $statement->bindValue(':tag_name', $tagName);
+    $statement->bindValue(':type', $tagType);
+    $statement->execute();
+
+    $statement->closeCursor();
+}
+
+function updateRecipe($recipeId, $recipeTitle, $recipeDescription) {
+    global $db;
+
+    $query = "UPDATE recipe SET title = :title, description = :description WHERE recipe_id = :recipe_id";
+    $statement = $db->prepare($query);
+    $statement->bindValue(':recipe_id', $recipeId);
+    $statement->bindValue(':title', $recipeTitle);
+    $statement->bindValue(':description', $recipeDescription);
+    $statement->execute();
+
+    $statement->closeCursor();
+}
+
 ?>

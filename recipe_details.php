@@ -37,6 +37,14 @@
         $statementIngredients->execute();
         $recipeIngredients = $statementIngredients->fetchAll(PDO::FETCH_ASSOC);
         $statementIngredients->closeCursor();
+
+        // Fetch the tags of the selected recipe
+        $queryTags = "SELECT tag_name FROM tags WHERE recipe_id = :recipe_id";
+        $statementTags = $db->prepare($queryTags);
+        $statementTags->bindValue(':recipe_id', $recipeId);
+        $statementTags->execute();
+        $recipeTags = $statementTags->fetchAll(PDO::FETCH_ASSOC);
+        $statementTags->closeCursor();
     } else {
         // Redirect to the profile page if recipe_id is not set
         header("Location: profile.php");
@@ -62,6 +70,8 @@
         header("Location: profile.php");
         exit();
     }
+
+    
 ?>
 
 <!DOCTYPE html>
@@ -129,6 +139,7 @@
             <h1><?php echo $recipeDetails[0]['title']; ?></h1>
             <p><?php echo $recipeDetails[0]['description']; ?></p>
 
+            <!-- ingredients -->
             <h2>Ingredients:</h2>
             <ul>
                 <?php foreach ($recipeIngredients as $ingredient) { ?>
@@ -144,18 +155,41 @@
                     </li>
                 <?php } ?>
             </ul>
+            <!-- end ingredients -->
 
+            <!-- instructions -->
             <h2>Instructions:</h2>
             <ol class="list-group list-group-numbered">
                 <?php foreach ($recipeDetails as $instruction) { ?>
                     <li class="list-group-item"><?php echo $instruction['instruction']; ?></li>
                 <?php } ?>
             </ol>
+            <!-- end instructions -->
+
+            <!-- Display Tags -->
+            <h2>Tags:</h2>
+            <?php if (!empty($recipeTags)) { ?>
+                <ul>
+                    <?php foreach ($recipeTags as $tag) { ?>
+                        <li><?php echo $tag['tag_name']; ?></li>
+                    <?php } ?>
+                </ul>
+            <?php } else { ?>
+                <p>No tags found for this recipe.</p>
+            <?php } ?>
+
         <?php } else { ?>
             <p>No recipe details found.</p>
         <?php } ?>
         <br>
         <!-- End display recipe details -->
+
+        <!-- Edit Recipe button -->
+        <button class="btn btn-primary" id="editRecipeBtn">
+            Edit Recipe
+        </button>
+        <!-- end delete button -->
+
 
         <!-- Delete Recipe Button -->
         <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteRecipeModal">
@@ -199,6 +233,14 @@
     <!-- end footer -->
 
     <script>
+        // edit recipe redirect
+        const editRecipeBtn = document.getElementById("editRecipeBtn");
+        editRecipeBtn.addEventListener("click", editRecipeRedirect);
+
+        function editRecipeRedirect() {
+            window.location.href = "editRecipe.php";
+        }
+        // end redirect
     </script>
 </body>
 </html>
