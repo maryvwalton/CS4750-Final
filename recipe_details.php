@@ -12,37 +12,42 @@
         exit();
     }
 
-    // Check if the recipe_id is provided in the URL
-    if (!isset($_GET['recipe_id'])) {
-        // Redirect to a page with an error message or go back to the recipe list
+    // Check if the recipe_id is set in the URL
+    if (isset($_GET['recipe_id'])) {
+        $recipeId = $_GET['recipe_id'];
+
+        // Fetch the details of the selected recipe including instructions
+        $queryRecipeDetails = "SELECT * FROM recipe 
+                            LEFT JOIN recipe_directions ON recipe.recipe_id = recipe_directions.recipe_id
+                            WHERE recipe.recipe_id = :recipe_id";
+        $statementRecipeDetails = $db->prepare($queryRecipeDetails);
+        $statementRecipeDetails->bindValue(':recipe_id', $recipeId);
+        $statementRecipeDetails->execute();
+        $recipeDetails = $statementRecipeDetails->fetchAll(PDO::FETCH_ASSOC);
+        $statementRecipeDetails->closeCursor();
+
+        // Fetch the ingredients and amounts of the selected recipe
+        $queryIngredients = "SELECT ri.recipe_id, ri.ingredient_name, ia.unit, ia.value
+        FROM recipe_ingredients ri
+        JOIN ingredients_amounts ia ON ri.recipe_id = ia.recipe_id AND ri.ingredient_id = ia.ingredient_id
+        WHERE ri.recipe_id = :recipe_id;
+        ";
+        $statementIngredients = $db->prepare($queryIngredients);
+        $statementIngredients->bindValue(':recipe_id', $recipeId);
+        $statementIngredients->execute();
+        $recipeIngredients = $statementIngredients->fetchAll(PDO::FETCH_ASSOC);
+        $statementIngredients->closeCursor();
+    } else {
+        // Redirect to the profile page if recipe_id is not set
         header("Location: profile.php");
         exit();
     }
-
-    // Fetch recipe details based on the provided recipe_id
-    $recipeId = $_GET['recipe_id'];
-    $query = "SELECT * FROM recipe WHERE recipe_id = :recipe_id";
-    $statement = $db->prepare($query);
-    $statement->bindValue(':recipe_id', $recipeId);
-    $statement->execute();
-    $recipeDetails = $statement->fetch(PDO::FETCH_ASSOC);
-    $statement->closeCursor();
-
-    // Check if the recipe is found
-    if (!$recipeDetails) {
-        // Redirect to a page with an error message or go back to the recipe list
-        header("Location: profile.php");
-        exit();
-    }
-
-    echo $recipeId;
-    echo "before deletion";
 
     // Check if the delete button is clicked
     if (isset($_POST['delete_recipe'])) {
         // Perform deletion here
         $deleteQuery = "
-        DELETE FROM `created_by` WHERE `recipe_id` = ;
+        DELETE FROM `created_by` WHERE `recipe_id` = :recipe_id;
         DELETE FROM `ingredients_amounts` WHERE `recipe_id` = :recipe_id;
         DELETE FROM `recipe_directions` WHERE `recipe_id` = :recipe_id;
         DELETE FROM `recipe_ingredients` WHERE `recipe_id` = :recipe_id;
@@ -57,8 +62,6 @@
         header("Location: profile.php");
         exit();
     }
-
-    echo "after delete";
 ?>
 
 <!DOCTYPE html>
@@ -66,10 +69,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo $recipeDetails['title']; ?> - Recipe Details</title>
+    <title>Recipe Details</title>
     <!-- Include Bootstrap CSS -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+   <!-- if you choose to use CDN for CSS bootstrap -->
+   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+   <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </head>
 
 
@@ -94,20 +98,20 @@
 
     <!-- Navigation bar KEEP -->
     <nav class="navbar navbar-expand-lg bg-light">
-        <div class="container-fluid">
-            <a class="navbar-brand text-black">Chef Your Way</a>
-            <a class=nav-link href="search.php">Search</a>
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item"> 
-                    <a class="nav-link" href="profile.php">Profile</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="logout.php">Logout</a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-    <!-- end navigation bar -->
+    <div class="container-fluid">
+        <a class="navbar-brand text-black">Chef Your Way</a>
+        <a class=nav-link href="search.php">Search</a>
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item"> 
+                <a class="nav-link" href="profile.php">Profile</a>
+            </li>
+            <li class="nav-item">
+               <a class="nav-link" href="logout.php">Logout</a>
+            </li>
+        </ul>
+    </div>
+  </nav>
+  <!-- end navigation bar -->
 
     <!-- Banner KEEP -->
         <div class="banner">
@@ -117,16 +121,50 @@
         </div>
     <!-- end banner -->
 
-    <!-- Recipe Details -->
+    <!-- main page content -->
     <div class="container mt-4">
-        <h1><?php echo $recipeDetails['title']; ?></h1>
-        <p><?php echo $recipeDetails['description']; ?></p>
+
+        <!-- Display recipe details -->
+        <?php if (isset($recipeDetails) && !empty($recipeDetails)) { ?>
+            <h1><?php echo $recipeDetails[0]['title']; ?></h1>
+            <p><?php echo $recipeDetails[0]['description']; ?></p>
+
+            <h2>Ingredients:</h2>
+            <ul>
+                <?php foreach ($recipeIngredients as $ingredient) { ?>
+                    <li>
+                        <?php 
+                            // Check if the unit is "unit", if not, display the unit
+                            $unit = ($ingredient['unit'] !== 'unit') ? $ingredient['unit'] : '';
+                            // Add "s" to the end of the ingredient name if the unit is "unit"
+                            $ingredientName = ($ingredient['unit'] == 'unit') ? $ingredient['ingredient_name'].'s' : $ingredient['ingredient_name'];
+                            // Display the ingredient with its value and unit (if not "unit")
+                            echo $ingredient['value'] . ' ' . $unit . ' ' . $ingredientName;
+                        ?>
+                    </li>
+                <?php } ?>
+            </ul>
+
+            <h2>Instructions:</h2>
+            <ol class="list-group list-group-numbered">
+                <?php foreach ($recipeDetails as $instruction) { ?>
+                    <li class="list-group-item"><?php echo $instruction['instruction']; ?></li>
+                <?php } ?>
+            </ol>
+        <?php } else { ?>
+            <p>No recipe details found.</p>
+        <?php } ?>
+        <br>
+        <!-- End display recipe details -->
 
         <!-- Delete Recipe Button -->
         <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteRecipeModal">
             Delete Recipe
         </button>
+        <!-- end delete button -->
+
     </div>
+    <!-- end main page content -->
 
     <!-- Delete Recipe Modal -->
     <div class="modal" id="deleteRecipeModal" tabindex="-1" aria-labelledby="deleteRecipeModalLabel" aria-hidden="true">
@@ -152,7 +190,8 @@
 
 
     <!-- Copyright Footer KEEP -->
-    <footer class="text-center text-lg-start fixed-bottom" style="background-color: #AFCFFF">
+    <br>
+    <footer class="text-center text-lg-start" style="background-color: #AFCFFF">
         <div class="text-center p-3">
             © 2023 Copyright: Chef Your Way
         </div>

@@ -1,33 +1,45 @@
 <?php
-    require("connect-db.php");
-    require("recipe-db.php");
+require("connect-db.php");
+require("recipe-db.php");
 
-    session_start(); // Start the session
+session_start(); // Start the session
 
-    if (!isset($_SESSION['user_id'])) {
-        // User is not logged in, redirect to login page
-        header("Location: index.html");
-        exit();
-    }
+if (!isset($_SESSION['user_id'])) {
+    // User is not logged in, redirect to login page
+    header("Location: index.html");
+    exit();
+}
 
-    // Check if the recipe_id is set in the URL
-    if(isset($_GET['recipe_id'])) {
-        $recipeId = $_GET['recipe_id'];
+// Check if the recipe_id is set in the URL
+if (isset($_GET['recipe_id'])) {
+    $recipeId = $_GET['recipe_id'];
 
-        // Fetch the details of the selected recipe including all instructions
-        $query = "SELECT * FROM recipe 
-                  LEFT JOIN recipe_directions ON recipe.recipe_id = recipe_directions.recipe_id
-                  WHERE recipe.recipe_id = :recipe_id";
-        $statement = $db->prepare($query);
-        $statement->bindValue(':recipe_id', $recipeId);
-        $statement->execute();
-        $recipeDetails = $statement->fetchAll(PDO::FETCH_ASSOC);
-        $statement->closeCursor();
-    } else {
-        // Redirect to the search page if recipe_id is not set
-        header("Location: search.php");
-        exit();
-    }
+    // Fetch the details of the selected recipe including instructions
+    $queryRecipeDetails = "SELECT * FROM recipe 
+                           LEFT JOIN recipe_directions ON recipe.recipe_id = recipe_directions.recipe_id
+                           WHERE recipe.recipe_id = :recipe_id";
+    $statementRecipeDetails = $db->prepare($queryRecipeDetails);
+    $statementRecipeDetails->bindValue(':recipe_id', $recipeId);
+    $statementRecipeDetails->execute();
+    $recipeDetails = $statementRecipeDetails->fetchAll(PDO::FETCH_ASSOC);
+    $statementRecipeDetails->closeCursor();
+
+    // Fetch the ingredients and amounts of the selected recipe
+    $queryIngredients = "SELECT ri.recipe_id, ri.ingredient_name, ia.unit, ia.value
+    FROM recipe_ingredients ri
+    JOIN ingredients_amounts ia ON ri.recipe_id = ia.recipe_id AND ri.ingredient_id = ia.ingredient_id
+    WHERE ri.recipe_id = :recipe_id;
+    ";
+    $statementIngredients = $db->prepare($queryIngredients);
+    $statementIngredients->bindValue(':recipe_id', $recipeId);
+    $statementIngredients->execute();
+    $recipeIngredients = $statementIngredients->fetchAll(PDO::FETCH_ASSOC);
+    $statementIngredients->closeCursor();
+} else {
+    // Redirect to the search page if recipe_id is not set
+    header("Location: search.php");
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -86,10 +98,26 @@
 
     <div class="container-fluid">
 
-        <!-- Display recipe details -->
-        <?php if(isset($recipeDetails) && !empty($recipeDetails)) { ?>
+      <!-- Display recipe details -->
+      <?php if (isset($recipeDetails) && !empty($recipeDetails)) { ?>
             <h1><?php echo $recipeDetails[0]['title']; ?></h1>
             <p><?php echo $recipeDetails[0]['description']; ?></p>
+
+            <h2>Ingredients:</h2>
+            <ul>
+                <?php foreach ($recipeIngredients as $ingredient) { ?>
+                    <li>
+                        <?php 
+                            // Check if the unit is "unit", if not, display the unit
+                            $unit = ($ingredient['unit'] !== 'unit') ? $ingredient['unit'] : '';
+                            // Add "s" to the end of the ingredient name if the unit is "unit"
+                            $ingredientName = ($ingredient['unit'] == 'unit') ? $ingredient['ingredient_name'].'s' : $ingredient['ingredient_name'];
+                            // Display the ingredient with its value and unit (if not "unit")
+                            echo $ingredient['value'] . ' ' . $unit . ' ' . $ingredientName;
+                        ?>
+                    </li>
+                <?php } ?>
+            </ul>
 
             <h2>Instructions:</h2>
             <ol class="list-group list-group-numbered">
@@ -97,7 +125,6 @@
                     <li class="list-group-item"><?php echo $instruction['instruction']; ?></li>
                 <?php } ?>
             </ol>
-                
         <?php } else { ?>
             <p>No recipe details found.</p>
         <?php } ?>
@@ -106,7 +133,8 @@
     </div>
 
     <!-- Copyright Footer KEEP -->
-    <footer class="text-center text-lg-start fixed-bottom" style="background-color: #AFCFFF">
+    <br>
+    <footer class="text-center text-lg-start" style="background-color: #AFCFFF">
         <div class="text-center p-3">
             © 2023 Copyright: Chef Your Way
         </div>

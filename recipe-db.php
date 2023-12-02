@@ -82,18 +82,68 @@ function userLogin()
     $statement->closeCursor();
 }
 
-function createRecipe() 
+function createRecipe($title, $description) 
 {
   global $db;
 
-  $query = "insert into recipe (title, description) values (:title, :description) ";
+  $query = "INSERT INTO recipe (title, description) VALUES (:title, :description)";
 
   $statement = $db->prepare($query);
   $statement->bindValue(':title', $title);
   $statement->bindValue(':description', $description);
   $statement->execute();
+  
+  // Retrieve the last inserted recipe ID
+  $recipeId = $db->lastInsertId();
+
   $statement->closeCursor();
+
+  return $recipeId;
 }
 
+function insertIngredient($recipeId, $ingredientName)
+{
+    global $db;
+
+    $query = "INSERT INTO recipe_ingredients (recipe_id, ingredient_name) VALUES (:recipeId, :ingredientName)";
+
+    $statement = $db->prepare($query);
+    $statement->bindValue(':recipeId', $recipeId);
+    $statement->bindValue(':ingredientName', $ingredientName);
+    $statement->execute();
+
+    // Retrieve the last inserted ingredient ID
+    $ingredientId = $db->lastInsertId();
+
+    $statement->closeCursor();
+
+    return $ingredientId;
+}
+
+
+function insertInstruction($recipeId, $instruction)
+{
+    global $db;
+    $query = "INSERT INTO recipe_directions (recipe_id, instruction) VALUES (:recipeID, :instruction)";
+
+    $statement = $db->prepare($query);
+    $statement->bindValue(':recipeID', $recipeId);
+    $statement->bindValue(':instruction', $instruction);
+    $statement->execute();
+
+    $statement->closeCursor();
+}
+
+function createdBy ($recipeId, $userId) {
+    global $db;
+    $query = "INSERT INTO created_by (recipe_id, user_id) VALUES (:recipeID, :userID)";
+
+    $statement = $db->prepare($query);
+    $statement->bindValue(':recipeID', $recipeId);
+    $statement->bindValue(':userID', $userId);
+    $statement->execute();
+
+    $statement->closeCursor();
+}
 
 ?>

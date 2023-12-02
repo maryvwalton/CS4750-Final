@@ -1,15 +1,62 @@
 <?php
-    require("connect-db.php");
+require("connect-db.php");
+require("recipe-db.php");
 
-    session_start(); // Start the session
+error_reporting(E_ALL);
+ini_set('display_errors', '1');
 
-    if (!isset($_SESSION['user_id'])) {
-        // User is not logged in, redirect to login page
-        header("Location: index.html");
-        exit();
-    }
+session_start(); // Start the session
 
+if (!isset($_SESSION['user_id'])) {
+  // User is not logged in, redirect to login page
+  header("Location: index.html");
+  exit();
+}
+
+// Check if the form is submitted
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+
+  // add the recipe to the table and get the recipe id
+  $recipeId = createRecipe($_POST['recipe_title'], $_POST['recipe_description']);
+
+
+
+  // Process directions
+  $instructions = $_POST['instruction'];
+
+  foreach ($instructions as $index => $instruction) {
+    insertInstruction($recipeId, $instruction);
+  } 
+  
+  // Process ingredients
+  $ingredientNames = $_POST['ingredient_name'];
+  $amounts = $_POST['amount'];
+  $units = $_POST['unit'];
+
+  foreach ($ingredientNames as $index => $ingredientName) {
+    // add ingredient to table and get id
+    $ingredientID = insertIngredient($recipeId, $ingredientName);
+
+    // Insert ingredient amounts into the 'ingredients_amounts' table
+    $insertAmountQuery = "INSERT INTO `ingredients_amounts` (`recipe_id`, `ingredient_id`, `unit`, `value`) 
+    VALUES (:recipe_id, :ingredient_id, :unit, :value)";
+    $statement = $db->prepare($insertAmountQuery);
+    $statement->bindValue(':recipe_id', $recipeId);
+    $statement->bindValue(':ingredient_id', $ingredientID);
+    $statement->bindValue(':unit', $units[$index]);
+    $statement->bindValue(':value', $amounts[$index]);
+    $statement->execute();
+  }
+
+  createdBy($recipeId, $_SESSION['user_id']);
+  // Redirect to a success page or any other page you want
+  header("Location: profile.php");
+  exit();
+}
 ?>
+
+
+
 
 <!-- 1. create HTML5 doctype -->
 <!DOCTYPE html>
@@ -46,8 +93,6 @@
   <!-- if you choose to use CDN for CSS bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-<!-- Bootstrap Icons -->
-<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.25.0/font/bootstrap-icons.css" rel="stylesheet">
 
 </head>
 
@@ -82,42 +127,99 @@
   <!-- main page content -->
   <div class="container-fluid">
 
-        <!-- display user name can remove -->
-        <?php
-            // The user is logged in, you can display the user-specific content here
-            echo "Welcome, " . $_SESSION['username'] . "!"; // Example content
-        ?>
-        <!-- end display -->
+    <!-- Recipe Creation Form -->
+    <div class="text-center">
+      <h2>Create Recipe</h2>
+      <form action="createRecipe.php" method="post">
+          <label for="recipe_title">Title:</label>
+          <input type="text" name="recipe_title" required>
+          <br>
+          <br>
 
+          <label for="recipe_description">Description:</label>
+          <textarea name="recipe_description" rows="4" required></textarea>
 
-        <!-- Recipe Creation Form -->
-        <h2>Create Recipe</h2>
-        <form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>">
-            <label for="title">Title:</label>
-            <input type="text" name="title" required>
+      <!-- Ingredients section -->
+      <div class="ingredient-section">
+          <h3>Ingredients:</h3>
+          <div class="ingredient-inputs">
+            <label for="ingredient_name">Ingredient Name:</label>
+            <input type="text" name="ingredient_name[]" required>
+  
+            <label for="amount">Amount:</label>
+            <input type="text" name="amount[]" required>
+  
+            <label for="unit">Unit:</label>
+            <select name="unit[]" required>
+              <option value="grams">grams</option>
+              <option value="kilograms">kilograms</option>
+              <option value="ounces">ounces</option>
+              <option value="pounds">pounds</option>
+              <option value="milliliters">milliliters</option>
+              <option value="liters">liters</option>
+              <option value="fluid ounces">fluid ounces</option>
+              <option value="gallons">gallons</option>
+              <option value="quarts">quarts</option>
+              <option value="pints">pints</option>
+              <option value="cups">cups</option>
+              <option value="tablespoons">tablespoons</option>
+              <option value="teaspoons">teaspoons</option>
+              <option value="pieces">pieces</option>
+              <option value="slices">slices</option>
+              <option value="pinch">pinch</option>
+              <option value="dash">dash</option>
+              <option value="bunch">bunch</option>
+              <option value="whole">whole</option>
+              <option value="half">half</option>
+              <option value="quarter">quarter</option>
+            </select>
+            <button class="btn btn-primary" type="button" onclick="addIngredient()">Add Ingredient</button>
+          </div>
+      </div>
+      <!-- end ingredients -->
 
-            <label for="description">Description:</label>
-            <textarea name="description" required></textarea>
+      <!-- Directions section -->
+      <div class="direction-section">
+          <h3>Directions:</h3>
+          <div class="direction-inputs">
+            <label for="instruction">Instruction:</label>
+            <textarea name="instruction[]" rows="3" required></textarea>
+            <button class="btn btn-primary" type="button" onclick="addDirection()">Add Instruction</button>
+          </div>
+        </div>
+      
+      <!-- end directions -->
 
-            <label for="ingredients">Ingredients (comma-separated):</label>
-            <input type="text" name="ingredients" required>
+          <button class="btn btn-success" type="submit">Create Recipe</button>
+      </form>
+    </div>
 
-            <label for="instructions">Instructions (one per line):</label>
-            <textarea name="instructions" rows="4" required></textarea>
+    <script>
+      function addIngredient() {
+        // Clone the existing ingredient input fields and append them under the ingredient section
+        const ingredientInputs = document.querySelector('.ingredient-section .ingredient-inputs');
+        const newIngredientInputs = ingredientInputs.cloneNode(true);
+        document.querySelector('.ingredient-section').appendChild(newIngredientInputs);
+      }
+  
+      function addDirection() {
+        // Clone the existing direction input fields and append them under the direction section
+        const directionInputs = document.querySelector('.direction-section .direction-inputs');
+        const newDirectionInputs = directionInputs.cloneNode(true);
+        document.querySelector('.direction-section').appendChild(newDirectionInputs);
+      }
+    </script>
 
-            <label for="tags">Tags (comma-separated):</label>
-            <input type="text" name="tags" required>
+    <!-- end form -->
 
-            <input type="submit" value="Create Recipe">
-        </form>
-        
-        <!-- end form -->
 
   </div>
+  <!-- end main page content -->
 
 
   <!-- Copyright Footer KEEP -->
-  <footer class="text-center text-lg-start fixed-bottom" style="background-color: #AFCFFF">
+  <br>
+  <footer class="text-center text-lg-start" style="background-color: #AFCFFF">
     <div class="text-center p-3">
       © 2023 Copyright: Chef Your Way
     </div>

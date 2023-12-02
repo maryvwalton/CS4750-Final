@@ -136,7 +136,7 @@
 
 
   <!-- Copyright Footer KEEP -->
-  <footer class="text-center text-lg-start fixed-bottom" style="background-color: #AFCFFF">
+  <footer class="text-center text-lg-start" style="background-color: #AFCFFF">
     <div class="text-center p-3">
       © 2023 Copyright: Chef Your Way
     </div>
