@@ -2,7 +2,7 @@
     require("connect-db.php");
     require("recipe-db.php");
 
-    session_start(); // Start the session
+    session_start();
 
     if (!isset($_SESSION['user_id'])) {
         // User is not logged in, redirect to login page
