@@ -81,12 +81,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     flex-shrink: 0;
   }
 
-  .center {
-    padding: 70px 0;
+  .title-center {
     text-align: center;
+    margin: 0 auto;
+    margin-top: 20px;
+    margin-bottom: 50px;
   }
-</style>
+  
+  /* Center the form */
+  .center-form {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh; 
+    }
 
+    form {
+      max-width: 600px; 
+      width: 100%;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+    }
+    
+  </style>
 <head>
   <meta charset="UTF-8">
 
@@ -134,97 +153,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   
 
   <!-- main page content -->
+  <br>
   <div class="container-fluid">
-
+    <h2 class="title-center">Create Recipe</h2>
     <!-- Recipe Creation Form -->
-    <div class="text-center">
-      <h2>Create Recipe</h2>
+    <div class="center-form">
       <form action="createRecipe.php" method="post">
-          <label for="recipe_title">Title:</label>
-          <input type="text" name="recipe_title" required>
-          <br>
-          <br>
-
-          <label for="recipe_description">Description:</label>
-          <textarea name="recipe_description" rows="4" required></textarea>
-
-      <!-- Ingredients section -->
-      <div class="ingredient-section">
-          <h3>Ingredients:</h3>
-          <div class="ingredient-inputs">
-            <label for="ingredient_name">Ingredient Name:</label>
-            <input type="text" name="ingredient_name[]" required>
-  
-            <label for="amount">Amount:</label>
-            <input type="number" name="amount[]" required>
-  
-            <label for="unit">Unit:</label>
-            <select name="unit[]" required>
-              <option value="grams">grams</option>
-              <option value="kilograms">kilograms</option>
-              <option value="ounces">ounces</option>
-              <option value="pounds">pounds</option>
-              <option value="milliliters">milliliters</option>
-              <option value="liters">liters</option>
-              <option value="fluid ounces">fluid ounces</option>
-              <option value="gallons">gallons</option>
-              <option value="quarts">quarts</option>
-              <option value="pints">pints</option>
-              <option value="cups">cups</option>
-              <option value="tablespoons">tablespoons</option>
-              <option value="teaspoons">teaspoons</option>
-              <option value="pieces">pieces</option>
-              <option value="slices">slices</option>
-              <option value="pinch">pinch</option>
-              <option value="dash">dash</option>
-              <option value="bunch">bunch</option>
-              <option value="whole">whole</option>
-              <option value="half">half</option>
-              <option value="quarter">quarter</option>
-            </select>
-            <button class="btn btn-primary" type="button" onclick="addIngredient()">Add Ingredient</button>
-          </div>
           
-      </div>
-      <!-- end ingredients -->
 
-      <!-- Directions section -->
-      <div class="direction-section">
-          <h3>Directions:</h3>
-          <div class="direction-inputs">
-            <label for="instruction">Instruction:</label>
-            <textarea name="instruction[]" rows="3" required></textarea>
-            <button class="btn btn-primary" type="button" onclick="addDirection()">Add Instruction</button>
-          </div>
-        </div>
-      
-      <!-- end directions -->
-
-        <!-- Tags section -->
-          <div class="tags-section">
-              <h3>Tags:</h3>
-              <div class="tags-inputs">
-                  <label for="tag_name">Tag Name:</label>
-                  <input type="text" name="tag_name[]">
-
-                  <label for="type">Tag Type:</label>
-                  <select name="type[]">
-                      <option value="dietary restrictions">Dietary Restrictions</option>
-                      <option value="country of origin">Country of Origin</option>
-                      <option value="category">Category</option>
-                  </select>
-
-                  <button class="btn btn-primary" type="button" onclick="addTag()">Add Tag</button>
-              </div>
-          </div>
-        <!-- End tags -->
-
-        <button class="btn btn-success" type="submit">Create Recipe</button>
-      </form>
-    </div>
-
-    <!-- Title -->
-    <div class="form-group">
+      <!-- Title -->
+      <div class="form-group">
           <label for="recipe_title">Title:</label>
           <input type="text" name="recipe_title" class="form-control" required>
         </div>
@@ -276,6 +214,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <button class="btn btn-primary" type="button" onclick="addIngredient()">Add Ingredient</button>
           </div>
         </div>
+        <br>
+
         <!-- end ingredients -->
 
         <!-- Directions section -->
@@ -289,6 +229,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             <button class="btn btn-primary" type="button" onclick="addDirection()">Add Instruction</button>
           </div>
         </div>
+        <br>
+
         <!-- end directions -->
 
         <!-- Tags section -->
@@ -311,6 +253,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
         <!-- End tags -->
 
+        <br>
         <button class="btn btn-success" type="submit">Create Recipe</button>
       </form>
     </div>
@@ -349,6 +292,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
   <!-- Copyright Footer KEEP -->
+  <br>
   <br>
   <footer class="text-center text-lg-start" style="background-color: #AFCFFF">
     <div class="text-center p-3">

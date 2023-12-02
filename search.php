@@ -42,6 +42,13 @@
     padding: 70px 0;
     text-align: center;
   }
+  footer {
+    position: absolute;
+    bottom: 0;
+    text-align: center;
+    padding: 10px 0;
+    width: 100%;
+}
 </style>
 
 <head>
@@ -92,7 +99,7 @@
 
      <!-- main page content -->
     <div class="container-fluid">
-
+        <br>
         <!-- Search form -->
         <div class="text-center">
             <form name="searchForm" action="" method="post">

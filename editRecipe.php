@@ -5,14 +5,21 @@
     <!-- Bootstrap CSS (you can replace this with your preferred CSS framework or your own styles) -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* Custom styles */
+        .banner {
+            background: url("https://s3-alpha-sig.figma.com/img/d0c1/3ace/f719ec8806ea906f47143c2b20b269d5?Expires=1702252800&Signature=SHCBG4KokAtTlU6tjr4b-ZUx1tbqkBTKSrC93an5KN0LmKCoWgLaLPE-8CjDnScl1e8iVvP74Ajd6rKthGHaCw34et4TqoVAdYaDcb3BYbRHNM~9vcUVY1Vsy1goatiPE-VJVdMsBfx--nre2Oh~WPPqgF0DSrpUFsgzrRKTEUj2aieFRPu3xj5mGcCiWSaSMoXXg-y62J1ZTncHNs-MYbnOy-Kpe9VMcoFcF5BOOYZRBdnWTDQJXyLGwKsSYGJIrLV0XVFEEUuP1mnCIEhR33J7ogt3loIoGlYoBYgiCus7TWc9hbZnqM5fBcWHs31PhZXYJSDC2KdoDo9tF613gg__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4") 50%;
+            background-size: cover;
+            display: flex;
+            height: 200px;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
+        }
+
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
             margin: 20px;
         }
         .container {
-            background-color: #fff;
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -43,9 +50,38 @@
         .btn-primary:hover {
             background-color: #0056b3;
         }
+        footer {
+            flex-shrink: 0;
+            text-align: center;
+            padding: 10px 0;
+        }
     </style>
 </head>
 <body>
+    <!-- Navigation bar KEEP -->
+   <nav class="navbar navbar-expand-lg bg-light">
+    <div class="container-fluid">
+        <a class="navbar-brand text-black">Chef Your Way</a>
+        <a class=nav-link href="search.php">Search</a>
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item"> 
+                <a class="nav-link" href="profile.php">Profile</a>
+            </li>
+            <li class="nav-item">
+               <a class="nav-link" href="logout.php">Logout</a>
+            </li>
+        </ul>
+    </div>
+  </nav>
+  <!-- end navigation bar -->
+
+  <!-- Banner KEEP -->
+  <div class="banner">
+    <div class="text-center">
+      <h1 class="text-white">Find delicious recipes for any occasion!</h1>
+    </div>
+  </div>
+  <!-- end banner -->
 </body>
 </html>
 
@@ -288,9 +324,15 @@ if (isset($_GET['recipe_id'])) {
         </form>
     </div>
 
-    <!-- Footer -->
-    <!-- Add your footer code here -->
+    <!-- Copyright Footer KEEP -->
+    <br>
+    <br>
+    <footer class="text-center text-lg-start" style="background-color: #AFCFFF">
+        <div class="text-center p-3">
+        © 2023 Copyright: Chef Your Way
+        </div>
+    </footer>
+    <!-- end footer -->
 
-    <!-- Add your script includes here -->
 </body>
 </html>

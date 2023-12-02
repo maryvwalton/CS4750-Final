@@ -102,6 +102,13 @@
         padding: 70px 0;
         text-align: center;
     }
+    footer {
+        position: absolute;
+        bottom: 0;
+        text-align: center;
+        padding: 10px 0;
+        width: 100%;
+    }
 </style>
 
 <body>
