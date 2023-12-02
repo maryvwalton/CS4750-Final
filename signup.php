@@ -59,7 +59,7 @@
     require("connect-db.php");
     require("recipe-db.php");
 
-    session_start(); // Start the session
+    session_start();
 
     error_reporting(E_ALL);
     ini_set('display_errors', 1);
@@ -67,13 +67,9 @@
     if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signupBtn'])) {
       $result = createUser($_POST['username'], $_POST['password'], $_POST['email']);
       
-      // Check for any errors or messages returned by createUser
       if ($result !== true) {
-          // Handle the error or display a message
           echo $result;
       }
-      // Note: If createUser is successful, the user is already logged in and redirected.
-      
     }
   
   ?>
