@@ -85,6 +85,13 @@
         padding: 70px 0;
         text-align: center;
     }
+    footer {
+        position: absolute;
+        bottom: 0;
+        text-align: center;
+        padding: 10px 0;
+        width: 100%;
+    }
 </style>
 
 <head>
@@ -187,10 +194,10 @@
         <!-- End display recipe details -->
 
         <!-- Edit Recipe button -->
-        <button class="btn btn-primary" id="editRecipeBtn">
+        <a class="btn btn-primary" href="editRecipe.php?recipe_id=<?php echo $recipeId; ?>">
             Edit Recipe
-        </button>
-        <!-- end edit button -->
+        </a>
+        <!-- end Edit Recipe button -->
 
         <!-- Delete Recipe Button -->
         <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteRecipeModal">

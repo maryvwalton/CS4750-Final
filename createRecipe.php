@@ -76,12 +76,31 @@
     flex-shrink: 0;
   }
 
-  .center {
-    padding: 70px 0;
+  .title-center {
     text-align: center;
+    margin: 0 auto;
+    margin-top: 20px;
+    margin-bottom: 50px;
   }
-</style>
+  
+  /* Center the form */
+  .center-form {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh; 
+    }
 
+    form {
+      max-width: 600px; 
+      width: 100%;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      background-color: #f9f9f9;
+    }
+    
+  </style>
 <head>
   <meta charset="UTF-8">
 
@@ -129,33 +148,39 @@
   
 
   <!-- main page content -->
+  <br>
   <div class="container-fluid">
-
+    <h2 class="title-center">Create Recipe</h2>
     <!-- Recipe Creation Form -->
-    <div class="text-center">
-      <h2>Create Recipe</h2>
+    <div class="center-form">
       <form action="createRecipe.php" method="post">
-
+          
         <!-- Title -->
-        <label for="recipe_title">Title:</label>
-        <input type="text" name="recipe_title" required>
+        <div class="form-group">
+          <label for="recipe_title">Title:</label>
+          <input type="text" name="recipe_title" class="form-control" required>
+        </div>
         <!-- end title -->
 
         <!-- Description -->
-        <label for="recipe_description">Description:</label>
-        <textarea name="recipe_description" rows="4" required></textarea>
-        <!-- end descripton -->
+        <div class="form-group">
+          <label for="recipe_description">Description:</label>
+          <textarea name="recipe_description" rows="4" class="form-control" required></textarea>
+        </div>
+        <!-- end description -->
 
         <!-- Ingredients section -->
         <div class="ingredient-section">
           <h3>Ingredients:</h3>
           <div class="ingredient-inputs">
             <label for="ingredient_name">Ingredient Name:</label>
-            <input type="text" name="ingredient_name[]" required>
-  
+            <input type="text" name="ingredient_name[]" class="form-control" required>
+            <br>
+
             <label for="amount">Amount:</label>
-            <input type="number" name="amount[]" required>
-  
+            <input type="number" name="amount[]" class="form-control" required>
+            <br>
+
             <label for="unit">Unit:</label>
             <select name="unit[]" required>
               <option value="grams">grams</option>
@@ -180,9 +205,12 @@
               <option value="half">half</option>
               <option value="quarter">quarter</option>
             </select>
+            <br>
+
             <button class="btn btn-primary" type="button" onclick="addIngredient()">Add Ingredient</button>
           </div>
         </div>
+        <br>
         <!-- end ingredients -->
 
         <!-- Directions section -->
@@ -190,10 +218,13 @@
           <h3>Directions:</h3>
           <div class="direction-inputs">
             <label for="instruction">Instruction:</label>
-            <textarea name="instruction[]" rows="3" required></textarea>
+            <textarea name="instruction[]" rows="3" class="form-control" required></textarea>
+            <br>
+
             <button class="btn btn-primary" type="button" onclick="addDirection()">Add Instruction</button>
           </div>
         </div>
+        <br>
         <!-- end directions -->
 
         <!-- Tags section -->
@@ -201,20 +232,22 @@
           <h3>Tags:</h3>
           <div class="tags-inputs">
             <label for="tag_name">Tag Name:</label>
-            <input type="text" name="tag_name[]">
-
+            <input type="text" name="tag_name[]" class="form-control">
+            <br>
             <label for="type">Tag Type:</label>
             <select name="type[]">
               <option value="dietary restrictions">Dietary Restrictions</option>
-              <option value="country of origin">Country of Origin</option>
-              <option value="category">Category</option>
+                <option value="country of origin">Country of Origin</option>
+                <option value="category">Category</option>
             </select>
+            <br>
 
             <button class="btn btn-primary" type="button" onclick="addTag()">Add Tag</button>
           </div>
         </div>
         <!-- End tags -->
 
+        <br>
         <button class="btn btn-success" type="submit">Create Recipe</button>
       </form>
     </div>
@@ -225,6 +258,7 @@
 
 
   <!-- Copyright Footer KEEP -->
+  <br>
   <br>
   <footer class="text-center text-lg-start" style="background-color: #AFCFFF">
     <div class="text-center p-3">
