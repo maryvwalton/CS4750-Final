@@ -1,66 +1,57 @@
 <?php
-require("connect-db.php");
-require("recipe-db.php");
+    require("connect-db.php");
+    require("recipe-db.php");
 
-session_start(); // Start the session
+    session_start();
 
-if (!isset($_SESSION['user_id'])) {
-    // User is not logged in, redirect to login page
-    header("Location: index.html");
-    exit();
-}
+    if (!isset($_SESSION['user_id'])) {
+        header("Location: index.html");
+        exit();
+    }
 
-// Check if the recipe_id is set in the URL
-if (isset($_GET['recipe_id'])) {
-    $recipeId = $_GET['recipe_id'];
+    // Check if the recipe_id is set in the URL
+    if (isset($_GET['recipe_id'])) {
+        $recipeId = $_GET['recipe_id'];
 
-    // Fetch the details of the selected recipe including instructions
-    $queryRecipeDetails = "SELECT * FROM recipe 
-                           LEFT JOIN recipe_directions ON recipe.recipe_id = recipe_directions.recipe_id
-                           WHERE recipe.recipe_id = :recipe_id";
-    $statementRecipeDetails = $db->prepare($queryRecipeDetails);
-    $statementRecipeDetails->bindValue(':recipe_id', $recipeId);
-    $statementRecipeDetails->execute();
-    $recipeDetails = $statementRecipeDetails->fetchAll(PDO::FETCH_ASSOC);
-    $statementRecipeDetails->closeCursor();
+        // Fetch the details of the selected recipe including instructions
+        $queryRecipeDetails = "SELECT * FROM recipe 
+                            LEFT JOIN recipe_directions ON recipe.recipe_id = recipe_directions.recipe_id
+                            WHERE recipe.recipe_id = :recipe_id";
+        $statementRecipeDetails = $db->prepare($queryRecipeDetails);
+        $statementRecipeDetails->bindValue(':recipe_id', $recipeId);
+        $statementRecipeDetails->execute();
+        $recipeDetails = $statementRecipeDetails->fetchAll(PDO::FETCH_ASSOC);
+        $statementRecipeDetails->closeCursor();
 
-    // Fetch the ingredients and amounts of the selected recipe
-    $queryIngredients = "SELECT ri.recipe_id, ri.ingredient_name, ia.unit, ia.value
-    FROM recipe_ingredients ri
-    JOIN ingredients_amounts ia ON ri.recipe_id = ia.recipe_id AND ri.ingredient_id = ia.ingredient_id
-    WHERE ri.recipe_id = :recipe_id;
-    ";
-    $statementIngredients = $db->prepare($queryIngredients);
-    $statementIngredients->bindValue(':recipe_id', $recipeId);
-    $statementIngredients->execute();
-    $recipeIngredients = $statementIngredients->fetchAll(PDO::FETCH_ASSOC);
-    $statementIngredients->closeCursor();
+        // Fetch the ingredients and amounts of the selected recipe
+        $queryIngredients = "SELECT ri.recipe_id, ri.ingredient_name, ia.unit, ia.value
+        FROM recipe_ingredients ri
+        JOIN ingredients_amounts ia ON ri.recipe_id = ia.recipe_id AND ri.ingredient_id = ia.ingredient_id
+        WHERE ri.recipe_id = :recipe_id;
+        ";
+        $statementIngredients = $db->prepare($queryIngredients);
+        $statementIngredients->bindValue(':recipe_id', $recipeId);
+        $statementIngredients->execute();
+        $recipeIngredients = $statementIngredients->fetchAll(PDO::FETCH_ASSOC);
+        $statementIngredients->closeCursor();
 
-    // Fetch the tags of the selected recipe
-    $queryTags = "SELECT tag_name FROM tags WHERE recipe_id = :recipe_id";
-    $statementTags = $db->prepare($queryTags);
-    $statementTags->bindValue(':recipe_id', $recipeId);
-    $statementTags->execute();
-    $recipeTags = $statementTags->fetchAll(PDO::FETCH_ASSOC);
-    $statementTags->closeCursor();
-} else {
-    // Redirect to the search page if recipe_id is not set
-    header("Location: search.php");
-    exit();
-}
+        // Fetch the tags of the selected recipe
+        $queryTags = "SELECT tag_name FROM tags WHERE recipe_id = :recipe_id";
+        $statementTags = $db->prepare($queryTags);
+        $statementTags->bindValue(':recipe_id', $recipeId);
+        $statementTags->execute();
+        $recipeTags = $statementTags->fetchAll(PDO::FETCH_ASSOC);
+        $statementTags->closeCursor();
+
+    } else {
+        // Redirect to the search page if recipe_id is not set
+        header("Location: search.php");
+        exit();
+    }
 ?>
 
 <!DOCTYPE html>
 <html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="author" content="Mary Walton">
-    <meta name="description" content="Recipe Details Page">
-    <title>Recipe Details</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-</head>
 <style>
   .banner {
     background: url("https://s3-alpha-sig.figma.com/img/d0c1/3ace/f719ec8806ea906f47143c2b20b269d5?Expires=1702252800&Signature=SHCBG4KokAtTlU6tjr4b-ZUx1tbqkBTKSrC93an5KN0LmKCoWgLaLPE-8CjDnScl1e8iVvP74Ajd6rKthGHaCw34et4TqoVAdYaDcb3BYbRHNM~9vcUVY1Vsy1goatiPE-VJVdMsBfx--nre2Oh~WPPqgF0DSrpUFsgzrRKTEUj2aieFRPu3xj5mGcCiWSaSMoXXg-y62J1ZTncHNs-MYbnOy-Kpe9VMcoFcF5BOOYZRBdnWTDQJXyLGwKsSYGJIrLV0XVFEEUuP1mnCIEhR33J7ogt3loIoGlYoBYgiCus7TWc9hbZnqM5fBcWHs31PhZXYJSDC2KdoDo9tF613gg__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4") 50%;
@@ -77,8 +68,18 @@ if (isset($_GET['recipe_id'])) {
     text-align: center;
   }
 </style>
-<body>
 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="author" content="Mary Walton">
+    <meta name="description" content="Recipe Details Page">
+    <title>Recipe Details</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+</head>
+
+<body>
     <!-- Navigation bar KEEP -->
     <nav class="navbar navbar-expand-lg bg-light">
         <div class="container-fluid">
@@ -96,21 +97,24 @@ if (isset($_GET['recipe_id'])) {
     </nav>
     <!-- end navigation bar -->
 
-      <!-- Banner KEEP -->
-  <div class="banner">
-    <div class="text-center">
-      <h1 class="text-white">Find delicious recipes for any occasion!</h1>
-    </div>
-  </div>
-  <!-- end banner -->
 
+    <!-- Banner KEEP -->
+    <div class="banner">
+        <div class="text-center">
+            <h1 class="text-white">Find delicious recipes for any occasion!</h1>
+        </div>
+    </div>
+    <!-- end banner -->
+
+    <!-- main page content -->
     <div class="container-fluid">
 
-      <!-- Display recipe details -->
-      <?php if (isset($recipeDetails) && !empty($recipeDetails)) { ?>
+        <!-- Display recipe details -->
+        <?php if (isset($recipeDetails) && !empty($recipeDetails)) { ?>
             <h1><?php echo $recipeDetails[0]['title']; ?></h1>
             <p><?php echo $recipeDetails[0]['description']; ?></p>
 
+            <!-- ingredients -->
             <h2>Ingredients:</h2>
             <ul>
                 <?php foreach ($recipeIngredients as $ingredient) { ?>
@@ -126,15 +130,18 @@ if (isset($_GET['recipe_id'])) {
                     </li>
                 <?php } ?>
             </ul>
+            <!-- end ingredients -->
 
+            <!-- directions -->
             <h2>Instructions:</h2>
             <ol class="list-group list-group-numbered">
                 <?php foreach ($recipeDetails as $instruction) { ?>
                     <li class="list-group-item"><?php echo $instruction['instruction']; ?></li>
                 <?php } ?>
             </ol>
+            <!-- end directions -->
 
-            <!-- Display Tags -->
+            <!-- tags -->
             <h2>Tags:</h2>
             <?php if (!empty($recipeTags)) { ?>
                 <ul>
@@ -145,6 +152,7 @@ if (isset($_GET['recipe_id'])) {
             <?php } else { ?>
                 <p>No tags found for this recipe.</p>
             <?php } ?>
+            <!-- end tage -->
             
         <?php } else { ?>
             <p>No recipe details found.</p>
@@ -152,6 +160,7 @@ if (isset($_GET['recipe_id'])) {
         <!-- End display recipe details -->
 
     </div>
+    <!-- end page content -->
 
     <!-- Copyright Footer KEEP -->
     <br>
