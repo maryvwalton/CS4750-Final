@@ -14,3 +14,7 @@ Open XAMPP and run all servers
 Open browser, type localhost/cs4750/final-project/index.html
 
 Create a new account and use app.
+
+
+SQL database:
+updated as of 12/1
