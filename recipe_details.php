@@ -185,10 +185,11 @@
         <!-- End display recipe details -->
 
         <!-- Edit Recipe button -->
-        <button class="btn btn-primary" id="editRecipeBtn">
+        <a class="btn btn-primary" href="editRecipe.php?recipe_id=<?php echo $recipeId; ?>">
             Edit Recipe
-        </button>
-        <!-- end delete button -->
+        </a>
+        <!-- end Edit Recipe button -->
+
 
 
         <!-- Delete Recipe Button -->

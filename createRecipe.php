@@ -184,6 +184,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             </select>
             <button class="btn btn-primary" type="button" onclick="addIngredient()">Add Ingredient</button>
           </div>
+          
       </div>
       <!-- end ingredients -->
 
@@ -221,6 +222,101 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <button class="btn btn-success" type="submit">Create Recipe</button>
       </form>
     </div>
+
+    <!-- Title -->
+    <div class="form-group">
+          <label for="recipe_title">Title:</label>
+          <input type="text" name="recipe_title" class="form-control" required>
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+          <label for="recipe_description">Description:</label>
+          <textarea name="recipe_description" rows="4" class="form-control" required></textarea>
+        </div>
+
+        <!-- Ingredients section -->
+        <div class="ingredient-section">
+          <h3>Ingredients:</h3>
+          <div class="ingredient-inputs">
+            <label for="ingredient_name">Ingredient Name:</label>
+            <input type="text" name="ingredient_name[]" class="form-control" required>
+            <br>
+
+            <label for="amount">Amount:</label>
+            <input type="number" name="amount[]" class="form-control" required>
+            <br>
+
+            <label for="unit">Unit:</label>
+            <select name="unit[]" required>
+              <option value="grams">grams</option>
+              <option value="kilograms">kilograms</option>
+              <option value="ounces">ounces</option>
+              <option value="pounds">pounds</option>
+              <option value="milliliters">milliliters</option>
+              <option value="liters">liters</option>
+              <option value="fluid ounces">fluid ounces</option>
+              <option value="gallons">gallons</option>
+              <option value="quarts">quarts</option>
+              <option value="pints">pints</option>
+              <option value="cups">cups</option>
+              <option value="tablespoons">tablespoons</option>
+              <option value="teaspoons">teaspoons</option>
+              <option value="pieces">pieces</option>
+              <option value="slices">slices</option>
+              <option value="pinch">pinch</option>
+              <option value="dash">dash</option>
+              <option value="bunch">bunch</option>
+              <option value="whole">whole</option>
+              <option value="half">half</option>
+              <option value="quarter">quarter</option>
+            </select>
+            <br>
+
+            <button class="btn btn-primary" type="button" onclick="addIngredient()">Add Ingredient</button>
+          </div>
+        </div>
+        <!-- end ingredients -->
+
+        <!-- Directions section -->
+        <div class="direction-section">
+          <h3>Directions:</h3>
+          <div class="direction-inputs">
+            <label for="instruction">Instruction:</label>
+            <textarea name="instruction[]" rows="3" class="form-control" required></textarea>
+            <br>
+
+            <button class="btn btn-primary" type="button" onclick="addDirection()">Add Instruction</button>
+          </div>
+        </div>
+        <!-- end directions -->
+
+        <!-- Tags section -->
+        <div class="tags-section">
+          <h3>Tags:</h3>
+          <div class="tags-inputs">
+            <label for="tag_name">Tag Name:</label>
+            <input type="text" name="tag_name[]" class="form-control">
+            <br>
+            <label for="type">Tag Type:</label>
+            <select name="type[]">
+              <option value="dietary restrictions">Dietary Restrictions</option>
+                <option value="country of origin">Country of Origin</option>
+                <option value="category">Category</option>
+            </select>
+            <br>
+
+            <button class="btn btn-primary" type="button" onclick="addTag()">Add Tag</button>
+          </div>
+        </div>
+        <!-- End tags -->
+
+        <button class="btn btn-success" type="submit">Create Recipe</button>
+      </form>
+    </div>
+    <!-- end form -->
+  </div>
+  <!-- end main page content -->
 
     <script>
       function addIngredient() {

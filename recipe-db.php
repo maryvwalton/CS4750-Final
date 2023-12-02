@@ -172,4 +172,140 @@ function updateRecipe($recipeId, $recipeTitle, $recipeDescription) {
     $statement->closeCursor();
 }
 
+function getRecipeById($recipeId)
+{
+    global $db;
+
+    $query = "SELECT * FROM recipe WHERE recipe_id = :recipe_id";
+    $statement = $db->prepare($query);
+    $statement->bindValue(':recipe_id', $recipeId);
+    $statement->execute();
+
+    $recipe = $statement->fetch(PDO::FETCH_ASSOC);
+    $statement->closeCursor();
+
+    return $recipe;
+}
+
+function updateIngredient($ingredientId, $ingredientName)
+{
+    global $db;
+
+    $query = "UPDATE recipe_ingredients SET ingredient_name = :ingredientName WHERE ingredient_id = :ingredientId";
+
+    $statement = $db->prepare($query);
+    $statement->bindValue(':ingredientId', $ingredientId);
+    $statement->bindValue(':ingredientName', $ingredientName);
+    $statement->execute();
+
+    $statement->closeCursor();
+}
+
+function updateInstruction($instructionId, $newInstruction)
+{
+    global $db;
+    $query = "UPDATE recipe_directions SET instruction = :newInstruction WHERE instruction_id = :instructionId";
+
+    $statement = $db->prepare($query);
+    $statement->bindValue(':newInstruction', $newInstruction);
+    $statement->bindValue(':instructionId', $instructionId);
+    $statement->execute();
+
+    $statement->closeCursor();
+}
+
+function updateIngredientAmounts($ingredientAmountId, $newAmount)
+{
+    global $db;
+
+    $query = "UPDATE ingredients_amounts SET value = :newAmount WHERE amount_id = :ingredientAmountId";
+
+    $statement = $db->prepare($query);
+    $statement->bindValue(':ingredientAmountId', $ingredientAmountId);
+    $statement->bindValue(':newAmount', $newAmount);
+    $statement->execute();
+
+    $statement->closeCursor();
+}
+
+function updateTag($tagId, $newTagName, $newTagType)
+{
+    global $db;
+
+    $query = "UPDATE `tags` SET `tag_name` = :newTagName, `type` = :newTagType WHERE `tag_id` = :tagId";
+    $statement = $db->prepare($query);
+    $statement->bindValue(':tagId', $tagId);
+    $statement->bindValue(':newTagName', $newTagName);
+    $statement->bindValue(':newTagType', $newTagType);
+    $statement->execute();
+
+    $statement->closeCursor();
+}
+
+// In recipe-db.php
+
+function getInstructionsForRecipe($recipeId)
+{
+    global $db;
+
+    $query = "SELECT * FROM recipe_directions WHERE recipe_id = :recipe_id";
+    $statement = $db->prepare($query);
+    $statement->bindValue(':recipe_id', $recipeId);
+    $statement->execute();
+
+    $instructions = $statement->fetchAll(PDO::FETCH_ASSOC);
+    $statement->closeCursor();
+
+    return $instructions;
+}
+
+function getIngredientsForRecipe($recipeId)
+{
+    global $db;
+
+    $query = "SELECT * FROM recipe_ingredients WHERE recipe_id = :recipe_id";
+    $statement = $db->prepare($query);
+    $statement->bindValue(':recipe_id', $recipeId);
+    $statement->execute();
+
+    $ingredients = $statement->fetchAll(PDO::FETCH_ASSOC);
+    $statement->closeCursor();
+
+    return $ingredients;
+}
+
+function getIngredientAmountsForRecipe($recipeId)
+{
+    global $db;
+
+    $query = "SELECT ia.ingredient_id, ia.value, ia.unit
+              FROM ingredients_amounts ia
+              JOIN recipe_ingredients ri ON ia.ingredient_id = ri.ingredient_id
+              WHERE ri.recipe_id = :recipe_id";
+
+    $statement = $db->prepare($query);
+    $statement->bindValue(':recipe_id', $recipeId);
+    $statement->execute();
+
+    $ingredientAmounts = $statement->fetchAll(PDO::FETCH_ASSOC);
+    $statement->closeCursor();
+
+    return $ingredientAmounts;
+}
+
+function getTagsForRecipe($recipeId)
+{
+    global $db;
+
+    $query = "SELECT * FROM tags WHERE recipe_id = :recipe_id";
+    $statement = $db->prepare($query);
+    $statement->bindValue(':recipe_id', $recipeId);
+    $statement->execute();
+
+    $tags = $statement->fetchAll(PDO::FETCH_ASSOC);
+    $statement->closeCursor();
+
+    return $tags;
+}
+
 ?>
