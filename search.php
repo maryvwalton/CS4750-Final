@@ -2,10 +2,9 @@
     require("connect-db.php");
     require("recipe-db.php");
 
-    session_start(); // Start the session
+    session_start();
 
     if (!isset($_SESSION['user_id'])) {
-        // User is not logged in, redirect to login page
         header("Location: index.html");
         exit();
     }
@@ -70,22 +69,22 @@
 </head>
 
 <body>
-   <!-- Navigation bar KEEP -->
-   <nav class="navbar navbar-expand-lg bg-light">
-    <div class="container-fluid">
-        <a class="navbar-brand text-black">Chef Your Way</a>
-        <a class=nav-link href="search.php">Search</a>
-        <ul class="navbar-nav ml-auto">
-            <li class="nav-item"> 
-                <a class="nav-link" href="profile.php">Profile</a>
-            </li>
-            <li class="nav-item">
-               <a class="nav-link" href="logout.php">Logout</a>
-            </li>
-        </ul>
-    </div>
-  </nav>
-  <!-- end navigation bar -->
+    <!-- Navigation bar KEEP -->
+    <nav class="navbar navbar-expand-lg bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand text-black">Chef Your Way</a>
+            <a class=nav-link href="search.php">Search</a>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item"> 
+                    <a class="nav-link" href="profile.php">Profile</a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link" href="logout.php">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <!-- end navigation bar -->
 
 
     <!-- Banner KEEP -->
@@ -97,7 +96,7 @@
     <!-- end banner -->
   
 
-     <!-- main page content -->
+    <!-- main page content -->
     <div class="container-fluid">
         <br>
         <!-- Search form -->
@@ -145,7 +144,6 @@
     </div>
   </footer>
   <!-- end footer -->
-
 
 </body>
 

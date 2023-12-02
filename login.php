@@ -1,13 +1,12 @@
 <?php
-session_start();
+  require("connect-db.php");
+  require("recipe-db.php");
+  
+  session_start();
 
-require("connect-db.php");
-require("recipe-db.php");
-
-
-if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['loginBtn'])) {
-  userLogin();
-}
+  if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['loginBtn'])) {
+    userLogin();
+  }
 ?>
 
 

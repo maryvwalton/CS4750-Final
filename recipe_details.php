@@ -1,18 +1,16 @@
 <?php
-    require("connect-db.php"); // Include your database connection file
+    require("connect-db.php");
  
     error_reporting(E_ALL);
     ini_set('display_errors', '1');
 
-    session_start(); // Start the session
+    session_start();
 
     if (!isset($_SESSION['user_id'])) {
-        // User is not logged in, redirect to login page
         header("Location: index.html");
         exit();
     }
 
-    // Check if the recipe_id is set in the URL
     if (isset($_GET['recipe_id'])) {
         $recipeId = $_GET['recipe_id'];
 
@@ -28,10 +26,9 @@
 
         // Fetch the ingredients and amounts of the selected recipe
         $queryIngredients = "SELECT ri.recipe_id, ri.ingredient_name, ia.unit, ia.value
-        FROM recipe_ingredients ri
-        JOIN ingredients_amounts ia ON ri.recipe_id = ia.recipe_id AND ri.ingredient_id = ia.ingredient_id
-        WHERE ri.recipe_id = :recipe_id;
-        ";
+                            FROM recipe_ingredients ri
+                            JOIN ingredients_amounts ia ON ri.recipe_id = ia.recipe_id AND ri.ingredient_id = ia.ingredient_id
+                            WHERE ri.recipe_id = :recipe_id;";
         $statementIngredients = $db->prepare($queryIngredients);
         $statementIngredients->bindValue(':recipe_id', $recipeId);
         $statementIngredients->execute();
@@ -53,7 +50,6 @@
 
     // Check if the delete button is clicked
     if (isset($_POST['delete_recipe'])) {
-        // Perform deletion here
         $deleteQuery = "
         DELETE FROM `created_by` WHERE `recipe_id` = :recipe_id;
         DELETE FROM `ingredients_amounts` WHERE `recipe_id` = :recipe_id;
@@ -70,23 +66,10 @@
         header("Location: profile.php");
         exit();
     }
-
-    
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Recipe Details</title>
-    <!-- Include Bootstrap CSS -->
-   <!-- if you choose to use CDN for CSS bootstrap -->
-   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
-   <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
-</head>
-
-
 <style>
     .banner {
         background: url("https://s3-alpha-sig.figma.com/img/d0c1/3ace/f719ec8806ea906f47143c2b20b269d5?Expires=1702252800&Signature=SHCBG4KokAtTlU6tjr4b-ZUx1tbqkBTKSrC93an5KN0LmKCoWgLaLPE-8CjDnScl1e8iVvP74Ajd6rKthGHaCw34et4TqoVAdYaDcb3BYbRHNM~9vcUVY1Vsy1goatiPE-VJVdMsBfx--nre2Oh~WPPqgF0DSrpUFsgzrRKTEUj2aieFRPu3xj5mGcCiWSaSMoXXg-y62J1ZTncHNs-MYbnOy-Kpe9VMcoFcF5BOOYZRBdnWTDQJXyLGwKsSYGJIrLV0XVFEEUuP1mnCIEhR33J7ogt3loIoGlYoBYgiCus7TWc9hbZnqM5fBcWHs31PhZXYJSDC2KdoDo9tF613gg__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4") 50%;
@@ -111,32 +94,50 @@
     }
 </style>
 
-<body>
+<head>
+    <meta charset="UTF-8">
 
+    <!-- 2. include meta tag to ensure proper rendering and touch zooming -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="author" content="Mary Walton">
+    <meta name="description" content="Search Page">
+
+    <title>Recipe Details</title>
+
+    <!-- 3. link bootstrap -->
+    <!-- if you choose to use CDN for CSS bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</head>
+
+<body>
     <!-- Navigation bar KEEP -->
     <nav class="navbar navbar-expand-lg bg-light">
-    <div class="container-fluid">
-        <a class="navbar-brand text-black">Chef Your Way</a>
-        <a class=nav-link href="search.php">Search</a>
-        <ul class="navbar-nav ml-auto">
-            <li class="nav-item"> 
-                <a class="nav-link" href="profile.php">Profile</a>
-            </li>
-            <li class="nav-item">
-               <a class="nav-link" href="logout.php">Logout</a>
-            </li>
-        </ul>
-    </div>
-  </nav>
-  <!-- end navigation bar -->
+        <div class="container-fluid">
+            <a class="navbar-brand text-black">Chef Your Way</a>
+            <a class=nav-link href="search.php">Search</a>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item"> 
+                    <a class="nav-link" href="profile.php">Profile</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="logout.php">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <!-- end navigation bar -->
+
 
     <!-- Banner KEEP -->
-        <div class="banner">
-            <div class="text-center">
-                <h1 class="text-white">Find delicious recipes for any occasion!</h1>
-            </div>
+    <div class="banner">
+        <div class="text-center">
+            <h1 class="text-white">Find delicious recipes for any occasion!</h1>
         </div>
+    </div>
     <!-- end banner -->
+
 
     <!-- main page content -->
     <div class="container mt-4">
@@ -173,7 +174,7 @@
             </ol>
             <!-- end instructions -->
 
-            <!-- Display Tags -->
+            <!-- tags -->
             <h2>Tags:</h2>
             <?php if (!empty($recipeTags)) { ?>
                 <ul>
@@ -184,6 +185,7 @@
             <?php } else { ?>
                 <p>No tags found for this recipe.</p>
             <?php } ?>
+            <!-- end tags -->
 
         <?php } else { ?>
             <p>No recipe details found.</p>
@@ -197,8 +199,6 @@
         </a>
         <!-- end Edit Recipe button -->
 
-
-
         <!-- Delete Recipe Button -->
         <button class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteRecipeModal">
             Delete Recipe
@@ -207,6 +207,7 @@
 
     </div>
     <!-- end main page content -->
+
 
     <!-- Delete Recipe Modal -->
     <div class="modal" id="deleteRecipeModal" tabindex="-1" aria-labelledby="deleteRecipeModalLabel" aria-hidden="true">
@@ -240,15 +241,17 @@
     </footer>
     <!-- end footer -->
 
-    <script>
-        // edit recipe redirect
-        const editRecipeBtn = document.getElementById("editRecipeBtn");
-        editRecipeBtn.addEventListener("click", editRecipeRedirect);
-
-        function editRecipeRedirect() {
-            window.location.href = "editRecipe.php";
-        }
-        // end redirect
-    </script>
 </body>
+
+<script>
+    // edit recipe redirect
+    const editRecipeBtn = document.getElementById("editRecipeBtn");
+    editRecipeBtn.addEventListener("click", editRecipeRedirect);
+
+    function editRecipeRedirect() {
+        window.location.href = "editRecipe.php";
+    }
+    // end redirect
+</script>
+
 </html>

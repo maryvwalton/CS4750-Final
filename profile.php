@@ -1,14 +1,13 @@
 <?php
-    require("connect-db.php");
-    require("recipe-db.php");
+  require("connect-db.php");
+  require("recipe-db.php");
 
-    session_start(); // Start the session
+  session_start();
 
-    if (!isset($_SESSION['user_id'])) {
-        // User is not logged in, redirect to login page
-        header("Location: index.html");
-        exit();
-    }
+  if (!isset($_SESSION['user_id'])) {
+    header("Location: index.html");
+    exit();
+  }
 ?>
 
 <!-- 1. create HTML5 doctype -->
@@ -57,19 +56,19 @@
 </head>
 
 <body>
-   <!-- Navigation bar KEEP -->
-   <nav class="navbar navbar-expand-lg bg-light">
+  <!-- Navigation bar KEEP -->
+  <nav class="navbar navbar-expand-lg bg-light">
     <div class="container-fluid">
-        <a class="navbar-brand text-black">Chef Your Way</a>
-        <a class=nav-link href="search.php">Search</a>
-        <ul class="navbar-nav ml-auto">
-            <li class="nav-item"> 
-                <a class="nav-link" href="profile.php">Profile</a>
-            </li>
-            <li class="nav-item">
-               <a class="nav-link" href="logout.php">Logout</a>
-            </li>
-        </ul>
+      <a class="navbar-brand text-black">Chef Your Way</a>
+      <a class=nav-link href="search.php">Search</a>
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item"> 
+          <a class="nav-link" href="profile.php">Profile</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="logout.php">Logout</a>
+        </li>
+      </ul>
     </div>
   </nav>
   <!-- end navigation bar -->
@@ -87,17 +86,16 @@
   <!-- main page content -->
   <div class="container-fluid">
 
-    <!-- display user name can remove -->
+    <!-- Welcome user display -->
     <?php
-        // The user is logged in, you can display the user-specific content here
-        echo "Welcome, " . $_SESSION['username'] . "!"; // Example content
+      echo "Welcome, " . $_SESSION['username'] . "!";
     ?>
     <!-- end display -->
 
-    <!-- create recipe button reformat -->
+    <!-- create recipe button -->
     <div class="text-center">
       <button class="btn btn-primary" id="createRecipeBtn">
-          Create Recipe
+        Create Recipe
       </button>
     </div>
     <!-- end button -->
@@ -136,7 +134,6 @@
       ?>
     </div>
     <!-- End Recipe List -->
-
 
   </div>
   <!-- end -->
