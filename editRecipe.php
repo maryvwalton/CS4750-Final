@@ -116,16 +116,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   <!-- main page content -->
   <div class="container-fluid">
     <h2>Edit Recipe</h2>
-    <form action="edit_recipe.php" method="post">
-        <!-- Add input fields for recipe details -->
-        <label for="recipe_title">Recipe Title:</label>
-        <input type="text" id="recipe_title" name="recipe_title" value="<?php echo $current_title; ?>" required>
-        
-        <label for="recipe_description">Recipe Description:</label>
-        <textarea id="recipe_description" name="recipe_description" rows="4" required><?php echo $current_description; ?></textarea>
-
-        <button class="btn btn-primary" type="submit">Save Changes</button>
-    </form>
   </div>
   <!-- end main page content -->
 

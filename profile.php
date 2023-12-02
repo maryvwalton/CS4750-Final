@@ -95,40 +95,40 @@
     </div>
     <!-- end button -->
 
-<!-- User Recipe List -->
-<h2>My Recipes</h2>
-<div class="row">
-  <?php
-    global $db;
-    $userId = $_SESSION['user_id'];
-    $query = "SELECT r.recipe_id, r.title, r.description FROM created_by cb
-              JOIN recipe r ON cb.recipe_id = r.recipe_id
-              WHERE cb.user_id = :user_id";
+    <!-- User Recipe List -->
+    <h2>My Recipes</h2>
+    <div class="row">
+      <?php
+        global $db;
+        $userId = $_SESSION['user_id'];
+        $query = "SELECT r.recipe_id, r.title, r.description FROM created_by cb
+                  JOIN recipe r ON cb.recipe_id = r.recipe_id
+                  WHERE cb.user_id = :user_id";
 
-    $statement = $db->prepare($query);
-    $statement->bindValue(':user_id', $userId);
-    $statement->execute();
-    $results = $statement->fetchAll(PDO::FETCH_ASSOC);
-    $statement->closeCursor();
+        $statement = $db->prepare($query);
+        $statement->bindValue(':user_id', $userId);
+        $statement->execute();
+        $results = $statement->fetchAll(PDO::FETCH_ASSOC);
+        $statement->closeCursor();
 
-    if (isset($results) && !empty($results)) {
-      foreach ($results as $result) {
-        ?>
-        <div class="col-md-4 mb-4">
-          <div class="card">
-            <div class="card-body">
-              <h5 class="card-title"><?php echo $result['title']; ?></h5>
-              <p class="card-text"><?php echo $result['description']; ?></p>
-              <a href="recipe_details.php?recipe_id=<?php echo $result['recipe_id']; ?>" class="btn btn-primary">View Recipe</a>
+        if (isset($results) && !empty($results)) {
+          foreach ($results as $result) {
+            ?>
+            <div class="col-md-4 mb-4">
+              <div class="card">
+                <div class="card-body">
+                  <h5 class="card-title"><?php echo $result['title']; ?></h5>
+                  <p class="card-text"><?php echo $result['description']; ?></p>
+                  <a href="recipe_details.php?recipe_id=<?php echo $result['recipe_id']; ?>" class="btn btn-primary">View Recipe</a>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
-        <?php
-      }
-    }
-  ?>
-</div>
-<!-- End Recipe List -->
+            <?php
+          }
+        }
+      ?>
+    </div>
+    <!-- End Recipe List -->
 
 
   </div>
