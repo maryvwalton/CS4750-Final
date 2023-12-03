@@ -76,31 +76,12 @@
     flex-shrink: 0;
   }
 
-  .title-center {
+  .center {
+    padding: 70px 0;
     text-align: center;
-    margin: 0 auto;
-    margin-top: 20px;
-    margin-bottom: 50px;
   }
-  
-  /* Center the form */
-  .center-form {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh; 
-    }
+</style>
 
-    form {
-      max-width: 600px; 
-      width: 100%;
-      padding: 20px;
-      border: 1px solid #ccc;
-      border-radius: 8px;
-      background-color: #f9f9f9;
-    }
-    
-  </style>
 <head>
   <meta charset="UTF-8">
 
@@ -148,7 +129,6 @@
   
 
   <!-- main page content -->
-  <br>
   <div class="container-fluid">
     <h2 class="title-center">Create Recipe</h2>
     <!-- Recipe Creation Form -->
@@ -210,7 +190,6 @@
             <button class="btn btn-primary" type="button" onclick="addIngredient()">Add Ingredient</button>
           </div>
         </div>
-        <br>
         <!-- end ingredients -->
 
         <!-- Directions section -->
@@ -224,7 +203,6 @@
             <button class="btn btn-primary" type="button" onclick="addDirection()">Add Instruction</button>
           </div>
         </div>
-        <br>
         <!-- end directions -->
 
         <!-- Tags section -->
@@ -247,7 +225,6 @@
         </div>
         <!-- End tags -->
 
-        <br>
         <button class="btn btn-success" type="submit">Create Recipe</button>
       </form>
     </div>
@@ -258,7 +235,6 @@
 
 
   <!-- Copyright Footer KEEP -->
-  <br>
   <br>
   <footer class="text-center text-lg-start" style="background-color: #AFCFFF">
     <div class="text-center p-3">
