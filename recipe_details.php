@@ -1,6 +1,8 @@
 <?php
+
     require("connect-db.php");
- 
+    require("recipe-db.php");
+
     error_reporting(E_ALL);
     ini_set('display_errors', '1');
 
@@ -61,6 +63,8 @@
         $deleteStatement->bindValue(':recipe_id', $recipeId);
         $deleteStatement->execute();
         $deleteStatement->closeCursor();
+
+        insertIntoDelete($_SESSION['user_id'], $recipeId);
 
         // Redirect to the user's profile page after deletion
         header("Location: profile.php");

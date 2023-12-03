@@ -175,6 +175,17 @@ function getRecipeById($recipeId)
     return $recipe;
 }
 
+function insertIntoDelete($userId, $recipeId) {
+    global $db;
+
+    $query = "INSERT INTO `delete` (`user_id`, `recipe_id`) VALUES (:userId, :recipeId)";
+    $statement = $db->prepare($query);
+    $statement->bindValue(':userId', $userId);
+    $statement->bindValue(':recipeId', $recipeId);
+    $statement->execute();
+
+    $statement->closeCursor();
+}
 
 function updateInstruction($instructionId, $newInstruction)
 {
