@@ -335,7 +335,7 @@ function deleteRecipe($recipeId, $userId) {
 
     // update recipes created
     // Retrieve current recipesCreated value
-    $currentRecipesCreated = $db=>query("SELECT recipesCreated FROM user_stats WHERE user_id = $userId")→>fetchColumn();
+    $currentRecipesCreated = $db->query("SELECT recipesCreated FROM user_stats WHERE user_id = $userId")->fetchColumn();
 
     // Decrease the value
     $newRecipesCreated = $currentRecipesCreated - 1;
