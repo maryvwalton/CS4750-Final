@@ -27,7 +27,6 @@
             $statementUpdateRecipe->execute();
             $statementUpdateRecipe->closeCursor();
 
-            // ...
 
             // Update instructions
             if (isset($_POST['direction_ids']) && isset($_POST['instructions'])) {
@@ -41,12 +40,9 @@
                     $statementUpdateInstruction->bindValue(':instruction', $newInstruction);
                     $statementUpdateInstruction->bindValue(':direction_id', $instructionId);
                     $statementUpdateInstruction->execute();
-                    // If the update didn't work, you can debug by checking for errors here:
-                    // var_dump($statementUpdateInstruction->errorInfo());
                     $statementUpdateInstruction->closeCursor();
                 }
             }
-    // ...
 
 
             // Update ingredients and their amounts
@@ -58,38 +54,26 @@
                 isset($_POST['recipe_id'])
             ) {
                 $ingredientIds = $_POST['ingredient_ids'];
+                $recipeIds = $_POST['recipe_id'];
                 $newIngredientNames = $_POST['ingredient_names'];
                 $newIngredientAmounts = $_POST['ingredient_amounts'];
+                $newIngredientUnits = $_POST['ingredient_units']; // Retrieve the posted units
 
                 foreach ($ingredientIds as $index => $ingredientId) {
                     $newIngredientName = $newIngredientNames[$index];
                     $newIngredientAmount = $newIngredientAmounts[$index];
+                    $newIngredientUnit = $newIngredientUnits[$index]; // Get the corresponding unit for the ingredient
 
                     // Update ingredient name
-                    $updateIngredientNameQuery = "UPDATE recipe_ingredients SET ingredient_name = :ingredient_name WHERE ingredient_id = :ingredient_id";
-                    $statementUpdateIngredientName = $db->prepare($updateIngredientNameQuery);
-                    $statementUpdateIngredientName->bindValue(':ingredient_name', $newIngredientName);
-                    $statementUpdateIngredientName->bindValue(':ingredient_id', $ingredientId);
-                    $statementUpdateIngredientName->execute();
-                    $statementUpdateIngredientName->closeCursor();
+                    updateIngredient($ingredientId, $newIngredientName);
 
                     // Update ingredient amount and unit
-                    $updateAmountQuery = "UPDATE ingredients_amounts SET value = :value, unit = :unit WHERE ingredient_id = :ingredient_id AND recipe_id = :recipe_id";
-                    $statementUpdateAmount = $db->prepare($updateAmountQuery);
-                    $statementUpdateAmount->bindValue(':value', $newIngredientAmount);
-                    $statementUpdateAmount->bindValue(':unit', $newIngredientUnit);
-                    $statementUpdateAmount->bindValue(':ingredient_id', $ingredientId);
-                    $statementUpdateAmount->bindValue(':recipe_id', $recipeId);
-                    $statementUpdateAmount->execute();
-                    $statementUpdateAmount->closeCursor();
+                    updateIngredientAmountAndUnit($ingredientId, $recipeId, $newIngredientAmount, $newIngredientUnit);
                 }
             }
 
-    // ...
 
-            // Update tags
-            // ... (Update tags code, similar to instructions and ingredients)
-            // Update tags
+        // Update tags
         if (isset($_POST['tag_ids']) && isset($_POST['tag_names']) && isset($_POST['tag_types'])) {
             $tagIds = $_POST['tag_ids'];
             $newTagNames = $_POST['tag_names'];
@@ -103,8 +87,8 @@
             }
         }
 
-            header("Location: recipe_details.php?recipe_id=" . $recipeId);
-            exit();
+        header("Location: recipe_details.php?recipe_id=" . $recipeId);
+        exit();
         }
     }
 
@@ -243,47 +227,49 @@
             $ingredients = getIngredientsForRecipe($recipeId);
             $ingredientAmounts = getIngredientAmountsForRecipe($recipeId); 
             foreach ($ingredients as $ingredient) {
-                $currentAmount = getIngredientAmountsForRecipe($ingredient['ingredient_id'], $ingredientAmounts);
+                $currentAmount = null;
+                $currentUnit = null;
+
+                // Find the corresponding ingredient amount from fetched amounts based on ingredient ID
+                foreach ($ingredientAmounts as $amount) {
+                    if ($amount['ingredient_id'] === $ingredient['ingredient_id']) {
+                        $currentAmount = $amount;
+                        $currentUnit = $amount['unit']; // Fetch the current unit
+                        break;
+                    }
+                }
+               
                 ?>
                 <div class="mb-3">
                     <label for="ingredient_name" class="form-label">Ingredient Name:</label>
                     <input type="text" class="form-control" name="ingredient_names[]" value="<?php echo htmlspecialchars($ingredient['ingredient_name']); ?>">
                     <!-- Adding input field for ingredient amounts -->
                     <label for="amount">Amount:</label>
-                    <input type="number" class="form-control" name="ingredient_amounts[]" value="<?php echo htmlspecialchars($currentAmount['value']); ?>">
+                    <input type="number" class="form-control" name="ingredient_amounts[]" value="<?php echo $currentAmount ? htmlspecialchars($currentAmount['value']) : ''; ?>">
 
                     <label for="unit">Unit:</label>
-                    <select name="unit[]" required>
-                        <option value="grams">grams</option>
-                        <option value="kilograms">kilograms</option>
-                        <option value="ounces">ounces</option>
-                        <option value="pounds">pounds</option>
-                        <option value="milliliters">milliliters</option>
-                        <option value="liters">liters</option>
-                        <option value="fluid ounces">fluid ounces</option>
-                        <option value="gallons">gallons</option>
-                        <option value="quarts">quarts</option>
-                        <option value="pints">pints</option>
-                        <option value="cups">cups</option>
-                        <option value="tablespoons">tablespoons</option>
-                        <option value="teaspoons">teaspoons</option>
-                        <option value="pieces">pieces</option>
-                        <option value="slices">slices</option>
-                        <option value="pinch">pinch</option>
-                        <option value="dash">dash</option>
-                        <option value="bunch">bunch</option>
-                        <option value="whole">whole</option>
-                        <option value="half">half</option>
-                        <option value="quarter">quarter</option>
-                    </select>
+                    <select name="ingredient_units[]">
+                    <?php
+                    // Define an array of units to loop through
+                    $units = array(
+                        'grams', 'kilograms', 'ounces', 'pounds', 'milliliters', 'liters', 'fluid ounces',
+                        'gallons', 'quarts', 'pints', 'cups', 'tablespoons', 'teaspoons', 'pieces', 'slices',
+                        'pinch', 'dash', 'bunch', 'whole', 'half', 'quarter'
+                    );
+
+                    foreach ($units as $unit) {
+                        $selected = ($currentUnit === $unit) ? 'selected' : '';
+                        echo "<option value='$unit' $selected>$unit</option>";
+                    }
+                    ?>
+                </select>
+
                     <input type="hidden" name="ingredient_ids[]" value="<?php echo $ingredient['ingredient_id']; ?>">
                 </div>
                 <?php
             }
             ?>
 
-            <!-- Edit tags -->
-            <!-- ... (Edit tags code, similar to instructions and ingredients) -->
             <!-- Edit tags -->
             <h3>Edit Tags</h3>
             <?php
