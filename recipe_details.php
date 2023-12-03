@@ -52,17 +52,7 @@
 
     // Check if the delete button is clicked
     if (isset($_POST['delete_recipe'])) {
-        $deleteQuery = "
-        DELETE FROM `created_by` WHERE `recipe_id` = :recipe_id;
-        DELETE FROM `ingredients_amounts` WHERE `recipe_id` = :recipe_id;
-        DELETE FROM `recipe_directions` WHERE `recipe_id` = :recipe_id;
-        DELETE FROM `recipe_ingredients` WHERE `recipe_id` = :recipe_id;
-        DELETE FROM `tags` WHERE `recipe_id` = :recipe_id;
-        DELETE FROM recipe WHERE recipe_id = :recipe_id";
-        $deleteStatement = $db->prepare($deleteQuery);
-        $deleteStatement->bindValue(':recipe_id', $recipeId);
-        $deleteStatement->execute();
-        $deleteStatement->closeCursor();
+        deleteRecipe($recipeId, $_SESSION['user_id'])
 
         insertIntoDelete($_SESSION['user_id'], $recipeId);
 

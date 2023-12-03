@@ -1,3 +1,14 @@
+<?php
+  require("connect-db.php");
+  require("recipe-db.php");
+
+  session_start();
+
+  error_reporting(E_ALL);
+  ini_set('display_errors', 1);
+
+?>
+  
 <!-- 1. create HTML5 doctype -->
 <!DOCTYPE html>
 <html>
@@ -31,9 +42,8 @@
 
   <!-- 3. link bootstrap -->
   <!-- if you choose to use CDN for CSS bootstrap -->
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
-    integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -54,25 +64,18 @@
   </div>
   <!-- end banner -->
   
-
+  <!-- check username validility -->
   <?php
-    require("connect-db.php");
-    require("recipe-db.php");
-
-    session_start();
-
-    error_reporting(E_ALL);
-    ini_set('display_errors', 1);
-
     if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signupBtn'])) {
       $result = createUser($_POST['username'], $_POST['password'], $_POST['email']);
       
       if ($result !== true) {
-          echo $result;
+        echo $result;
       }
+
     }
-  
   ?>
+  <!-- end check -->
 
   <!-- main page content -->
   <div class="container-fluid">
