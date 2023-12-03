@@ -1,3 +1,14 @@
+<?php
+  require("connect-db.php");
+  require("recipe-db.php");
+
+  session_start();
+
+  error_reporting(E_ALL);
+  ini_set('display_errors', 1);
+
+?>
+  
 <!-- 1. create HTML5 doctype -->
 <!DOCTYPE html>
 <html>
@@ -53,25 +64,18 @@
   </div>
   <!-- end banner -->
   
-
+  <!-- check username validility -->
   <?php
-    require("connect-db.php");
-    require("recipe-db.php");
-
-    session_start();
-
-    error_reporting(E_ALL);
-    ini_set('display_errors', 1);
-
     if ($_SERVER['REQUEST_METHOD'] == 'POST' && isset($_POST['signupBtn'])) {
       $result = createUser($_POST['username'], $_POST['password'], $_POST['email']);
       
       if ($result !== true) {
-          echo $result;
+        echo $result;
       }
+
     }
-  
   ?>
+  <!-- end check -->
 
   <!-- main page content -->
   <div class="container-fluid">
