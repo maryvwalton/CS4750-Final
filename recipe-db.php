@@ -32,7 +32,12 @@ function createUser($username, $password, $email)
     $statement->execute();
 
     $userId = $db->lastInsertId();
-    
+
+    $userCreatedQuery = "INSERT INTO user_stats (user_id) VALUES (:user_id);";
+    $statement1 = $db->prepare($userCreatedQuery);
+    $statement1->bindValue(':user_id', $userId);
+    $statement1->execute();
+
     $statement->closeCursor();
 
     $_SESSION['user_id'] = $userId;
