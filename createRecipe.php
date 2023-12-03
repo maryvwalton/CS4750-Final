@@ -76,9 +76,36 @@
     flex-shrink: 0;
   }
 
-  .center {
-    padding: 70px 0;
+  .title-center {
     text-align: center;
+    margin: 0 auto;
+    margin-top: 20px;
+    margin-bottom: 50px;
+  }
+  
+  /* Center the form */
+  .center-form {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; 
+  }
+
+  form {
+    max-width: 600px; 
+    width: 100%;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: #f9f9f9;
+  }
+
+  footer {
+    position: absolute;
+    bottom: 0;
+    text-align: center;
+    padding: 10px 0;
+    width: 100%;
   }
 </style>
 
