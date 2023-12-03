@@ -57,7 +57,7 @@ function userLogin()
 
     $query = "SELECT user_id, password FROM user WHERE username = :username";
     $statement = $db->prepare($query);
-    $statement->bindValue(':username', $username);
+    $statement->bindValue(':username', $username, PDO::PARAM_STR);
     $statement->execute();
 
     $result = $statement->fetch(PDO::FETCH_ASSOC);
@@ -65,7 +65,7 @@ function userLogin()
     if ($result && password_verify($password, $result['password'])) {
         $_SESSION['user_id'] = $result['user_id'];
         $_SESSION['username'] = $username;
-        
+
         header("Location: profile.php");
         exit();
     } else {
@@ -74,6 +74,7 @@ function userLogin()
 
     $statement->closeCursor();
 }
+
 
 function createRecipe($title, $description) 
 {
