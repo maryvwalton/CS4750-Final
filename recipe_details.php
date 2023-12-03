@@ -52,7 +52,7 @@
 
     // Check if the delete button is clicked
     if (isset($_POST['delete_recipe'])) {
-        deleteRecipe($recipeId, $_SESSION['user_id'])
+        deleteRecipe($recipeId, $_SESSION['user_id']);
 
         insertIntoDelete($_SESSION['user_id'], $recipeId);
 

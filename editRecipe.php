@@ -68,7 +68,7 @@
                 foreach ($ingredientIds as $index => $ingredientId) {
                     $newIngredientAmount = $newIngredientAmounts[$index];
 
-                    // Update ingredient amount and unit
+                    // Update ingredient amount 
                     updateIngredientAmount($ingredientId, $newIngredientAmount);
                 }
             }
