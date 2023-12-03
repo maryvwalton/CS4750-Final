@@ -130,7 +130,6 @@
     <!-- Bootstrap CSS (you can replace this with your preferred CSS framework or your own styles) -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        /* Custom styles */
         body {
             font-family: Arial, sans-serif;
             background-color: #f4f4f4;
@@ -167,6 +166,15 @@
         }
         .btn-primary:hover {
             background-color: #0056b3;
+        }
+        .banner {
+            background: url("https://s3-alpha-sig.figma.com/img/d0c1/3ace/f719ec8806ea906f47143c2b20b269d5?Expires=1702252800&Signature=SHCBG4KokAtTlU6tjr4b-ZUx1tbqkBTKSrC93an5KN0LmKCoWgLaLPE-8CjDnScl1e8iVvP74Ajd6rKthGHaCw34et4TqoVAdYaDcb3BYbRHNM~9vcUVY1Vsy1goatiPE-VJVdMsBfx--nre2Oh~WPPqgF0DSrpUFsgzrRKTEUj2aieFRPu3xj5mGcCiWSaSMoXXg-y62J1ZTncHNs-MYbnOy-Kpe9VMcoFcF5BOOYZRBdnWTDQJXyLGwKsSYGJIrLV0XVFEEUuP1mnCIEhR33J7ogt3loIoGlYoBYgiCus7TWc9hbZnqM5fBcWHs31PhZXYJSDC2KdoDo9tF613gg__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4") 50%;
+            background-size: cover;
+            display: flex;
+            height: 200px;
+            justify-content: center;
+            align-items: center;
+            flex-shrink: 0;
         }
     </style>
 </head>
