@@ -1,6 +1,8 @@
 <?php
+
     require("connect-db.php");
- 
+    require("recipe-db.php");
+
     error_reporting(E_ALL);
     ini_set('display_errors', '1');
 
@@ -51,6 +53,8 @@
     // Check if the delete button is clicked
     if (isset($_POST['delete_recipe'])) {
         deleteRecipe($recipeId, $_SESSION['user_id'])
+
+        insertIntoDelete($_SESSION['user_id'], $recipeId);
 
         // Redirect to the user's profile page after deletion
         header("Location: profile.php");

@@ -196,15 +196,13 @@ function getRecipeById($recipeId)
     return $recipe;
 }
 
-function updateIngredient($ingredientId, $ingredientName)
-{
+function insertIntoDelete($userId, $recipeId) {
     global $db;
 
-    $query = "UPDATE recipe_ingredients SET ingredient_name = :ingredientName WHERE ingredient_id = :ingredientId";
-
+    $query = "INSERT INTO `delete` (`user_id`, `recipe_id`) VALUES (:userId, :recipeId)";
     $statement = $db->prepare($query);
-    $statement->bindValue(':ingredientId', $ingredientId);
-    $statement->bindValue(':ingredientName', $ingredientName);
+    $statement->bindValue(':userId', $userId);
+    $statement->bindValue(':recipeId', $recipeId);
     $statement->execute();
 
     $statement->closeCursor();
@@ -223,25 +221,51 @@ function updateInstruction($instructionId, $newInstruction)
     $statement->closeCursor();
 }
 
-function updateIngredientAmounts($ingredientAmountId, $newAmount)
+function updateIngredient($ingredientId, $newIngredientName)
 {
     global $db;
 
-    $query = "UPDATE ingredients_amounts SET value = :newAmount WHERE amount_id = :ingredientAmountId";
+    $query = "UPDATE recipe_ingredients SET `ingredient_name` = :newIngredientName WHERE ingredient_id = :ingredientId";
 
     $statement = $db->prepare($query);
-    $statement->bindValue(':ingredientAmountId', $ingredientAmountId);
-    $statement->bindValue(':newAmount', $newAmount);
+    $statement->bindValue(':ingredientId', $ingredientId);
+    $statement->bindValue(':newIngredientName', $newIngredientName);
     $statement->execute();
 
     $statement->closeCursor();
+}
+
+function updateIngredientAmount($ingredientId, $newIngredientAmount)
+{
+    global $db;
+
+    $updateAmountQuery = "UPDATE ingredients_amounts SET `value` = :newIngredientAmount WHERE ingredient_id = :ingredientId";
+    $statementUpdateAmount = $db->prepare($updateAmountQuery);
+    $statementUpdateAmount->bindValue(':newIngredientAmount', $newIngredientAmount);
+    $statementUpdateAmount->bindValue(':ingredientId', $ingredientId);
+    $statementUpdateAmount->execute();
+
+    $statementUpdateAmount->closeCursor();
+}
+
+function updateIngredientUnit($ingredientId, $newIngredientUnit)
+{
+    global $db;
+
+    $updateAmountQuery = "UPDATE ingredients_amounts SET `unit` = :newIngredientUnit WHERE ingredient_id = :ingredientId";
+    $statementUpdateAmount = $db->prepare($updateAmountQuery);
+    $statementUpdateAmount->bindValue(':newIngredientUnit', $newIngredientUnit);
+    $statementUpdateAmount->bindValue(':ingredientId', $ingredientId);
+    $statementUpdateAmount->execute();
+
+    $statementUpdateAmount->closeCursor();
 }
 
 function updateTag($tagId, $newTagName, $newTagType)
 {
     global $db;
 
-    $query = "UPDATE `tags` SET `tag_name` = :newTagName, `type` = :newTagType WHERE `tag_id` = :tagId";
+    $query = "UPDATE tags SET tag_name = :newTagName, type = :newTagType WHERE tag_id = :tagId";
     $statement = $db->prepare($query);
     $statement->bindValue(':tagId', $tagId);
     $statement->bindValue(':newTagName', $newTagName);
