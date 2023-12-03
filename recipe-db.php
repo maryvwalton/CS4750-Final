@@ -296,4 +296,36 @@ function getTagsForRecipe($recipeId)
     return $tags;
 }
 
+function deleteRecipe($recipeId, $userId) {
+    global $db; // Add this line to make $db accessible inside the function
+
+    // delete recipe
+    $deleteQuery = "
+    DELETE FROM `created_by` WHERE `recipe_id` = :recipe_id;
+    DELETE FROM `ingredients_amounts` WHERE `recipe_id` = :recipe_id;
+    DELETE FROM `recipe_directions` WHERE `recipe_id` = :recipe_id;
+    DELETE FROM `recipe_ingredients` WHERE `recipe_id` = :recipe_id;
+    DELETE FROM `tags` WHERE `recipe_id` = :recipe_id;
+    DELETE FROM recipe WHERE recipe_id = :recipe_id";
+    $deleteStatement = $db->prepare($deleteQuery);
+    $deleteStatement->bindValue(':recipe_id', $recipeId);
+    $deleteStatement->execute();
+    $deleteStatement->closeCursor();
+
+    // update recipes created
+    // Retrieve current recipesCreated value
+    $currentRecipesCreated = $db->query("SELECT recipesCreated FROM user_stats WHERE user_id = $userId")->fetchColumn();
+
+    // Decrease the value
+    $newRecipesCreated = $currentRecipesCreated - 1;
+
+    // Update user_stats table
+    $updateQuery = "UPDATE user_stats SET recipesCreated = :newRecipesCreated WHERE user_id = :userId";
+    $updateStatement = $db->prepare($updateQuery);
+    $updateStatement->bindValue(':newRecipesCreated', $newRecipesCreated);
+    $updateStatement->bindValue(':userId', $userId);
+    $updateStatement->execute();
+    $updateStatement->closeCursor();
+}
+  
 ?>
