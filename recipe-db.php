@@ -235,16 +235,27 @@ function updateIngredient($ingredientId, $newIngredientName)
     $statement->closeCursor();
 }
 
-function updateIngredientAmountAndUnit($ingredientId, $recipeId, $newIngredientAmount, $newIngredientUnit)
+function updateIngredientAmount($ingredientId, $newIngredientAmount)
 {
     global $db;
 
-    $updateAmountQuery = "UPDATE ingredients_amounts SET `value` = :newIngredientAmount, `unit` = :newIngredientUnit WHERE ingredient_id = :ingredientId AND recipe_id = :recipeId";
+    $updateAmountQuery = "UPDATE ingredients_amounts SET `value` = :newIngredientAmount WHERE ingredient_id = :ingredientId";
     $statementUpdateAmount = $db->prepare($updateAmountQuery);
     $statementUpdateAmount->bindValue(':newIngredientAmount', $newIngredientAmount);
+    $statementUpdateAmount->bindValue(':ingredientId', $ingredientId);
+    $statementUpdateAmount->execute();
+
+    $statementUpdateAmount->closeCursor();
+}
+
+function updateIngredientUnit($ingredientId, $newIngredientUnit)
+{
+    global $db;
+
+    $updateAmountQuery = "UPDATE ingredients_amounts SET `unit` = :newIngredientUnit WHERE ingredient_id = :ingredientId";
+    $statementUpdateAmount = $db->prepare($updateAmountQuery);
     $statementUpdateAmount->bindValue(':newIngredientUnit', $newIngredientUnit);
     $statementUpdateAmount->bindValue(':ingredientId', $ingredientId);
-    $statementUpdateAmount->bindValue(':recipeId', $recipeId);
     $statementUpdateAmount->execute();
 
     $statementUpdateAmount->closeCursor();
@@ -346,7 +357,7 @@ function deleteRecipe($recipeId, $userId) {
 
     // update recipes created
     // Retrieve current recipesCreated value
-    $currentRecipesCreated = $db=>query("SELECT recipesCreated FROM user_stats WHERE user_id = $userId")→>fetchColumn();
+    $currentRecipesCreated = $db->query("SELECT recipesCreated FROM user_stats WHERE user_id = $userId")->fetchColumn();
 
     // Decrease the value
     $newRecipesCreated = $currentRecipesCreated - 1;

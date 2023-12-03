@@ -43,34 +43,52 @@
                     $statementUpdateInstruction->closeCursor();
                 }
             }
-
-
-            // Update ingredients and their amounts
+            // Update ingredients
             if (
                 isset($_POST['ingredient_ids']) &&
-                isset($_POST['ingredient_names']) &&
-                isset($_POST['ingredient_amounts']) &&
-                isset($_POST['ingredient_units']) &&
-                isset($_POST['recipe_id'])
-            ) {
-                $ingredientIds = $_POST['ingredient_ids'];
-                $recipeIds = $_POST['recipe_id'];
+                isset($_POST['ingredient_names'])) {
+                $ingredientIds = $_POST['ingredient_ids'];                
                 $newIngredientNames = $_POST['ingredient_names'];
-                $newIngredientAmounts = $_POST['ingredient_amounts'];
-                $newIngredientUnits = $_POST['ingredient_units']; // Retrieve the posted units
 
                 foreach ($ingredientIds as $index => $ingredientId) {
                     $newIngredientName = $newIngredientNames[$index];
-                    $newIngredientAmount = $newIngredientAmounts[$index];
-                    $newIngredientUnit = $newIngredientUnits[$index]; // Get the corresponding unit for the ingredient
-
-                    // Update ingredient name
                     updateIngredient($ingredientId, $newIngredientName);
 
-                    // Update ingredient amount and unit
-                    updateIngredientAmountAndUnit($ingredientId, $recipeId, $newIngredientAmount, $newIngredientUnit);
                 }
             }
+
+            // Update ingredients amounts
+            if (
+                isset($_POST['ingredient_ids']) &&
+                isset($_POST['ingredient_amounts']) 
+            ) {
+                $ingredientIds = $_POST['ingredient_ids'];
+                $newIngredientAmounts = $_POST['ingredient_amounts'];
+
+                foreach ($ingredientIds as $index => $ingredientId) {
+                    $newIngredientAmount = $newIngredientAmounts[$index];
+
+                    // Update ingredient amount and unit
+                    updateIngredientAmount($ingredientId, $newIngredientAmount);
+                }
+            }
+
+            // Update ingredients units
+            if (
+                isset($_POST['ingredient_ids']) &&
+                isset($_POST['ingredient_units']) 
+            ) {
+                $ingredientIds = $_POST['ingredient_ids'];
+                $newIngredientUnits = $_POST['ingredient_units']; // Retrieve the posted units
+
+                foreach ($ingredientIds as $index => $ingredientId) {
+                    $newIngredientUnit = $newIngredientUnits[$index]; // Get the corresponding unit for the ingredient
+
+                    // Update unit
+                    updateIngredientUnit($ingredientId, $newIngredientUnit);
+                }
+            }
+            
 
 
         // Update tags
