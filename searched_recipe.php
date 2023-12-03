@@ -13,15 +13,22 @@
     if (isset($_GET['recipe_id'])) {
         $recipeId = $_GET['recipe_id'];
 
-        // Fetch the details of the selected recipe including instructions
+        // Fetch recipe title and description
         $queryRecipeDetails = "SELECT * FROM recipe 
-                            LEFT JOIN recipe_directions ON recipe.recipe_id = recipe_directions.recipe_id
                             WHERE recipe.recipe_id = :recipe_id";
         $statementRecipeDetails = $db->prepare($queryRecipeDetails);
         $statementRecipeDetails->bindValue(':recipe_id', $recipeId);
         $statementRecipeDetails->execute();
         $recipeDetails = $statementRecipeDetails->fetchAll(PDO::FETCH_ASSOC);
         $statementRecipeDetails->closeCursor();
+
+        // Fetch recipe instructions
+        $queryInstructions = "CALL GetSteps(:recipe_id)";
+        $statementInstructions = $db->prepare($queryInstructions);
+        $statementInstructions->bindValue(':recipe_id', $recipeId);
+        $statementInstructions->execute();
+        $recipeInstructions = $statementInstructions->fetchAll(PDO::FETCH_ASSOC);
+        $statementInstructions->closeCursor();
 
         // Fetch the ingredients and amounts of the selected recipe
         $queryIngredients = "SELECT ri.recipe_id, ri.ingredient_name, ia.unit, ia.value
@@ -135,7 +142,7 @@
             <!-- directions -->
             <h2>Instructions:</h2>
             <ol class="list-group list-group-numbered">
-                <?php foreach ($recipeDetails as $instruction) { ?>
+                <?php foreach ($recipeInstructions as $instruction) { ?>
                     <li class="list-group-item"><?php echo $instruction['instruction']; ?></li>
                 <?php } ?>
             </ol>
