@@ -66,46 +66,51 @@
 <!DOCTYPE html>
 <html>
 <style>
+  body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f4;
+      margin: 20px;
+  }
+  .container {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+  h2 {
+      color: #333;
+  }
+  label {
+      font-weight: bold;
+  }
+  .mb-3 {
+      margin-bottom: 15px;
+  }
+  .form-control {
+      width: 100%;
+      padding: 8px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+  }
+  .btn-primary {
+      background-color: #007bff;
+      color: #fff;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 4px;
+      cursor: pointer;
+  }
+  .btn-primary:hover {
+      background-color: #0056b3;
+  }
   .banner {
-    background: url("https://s3-alpha-sig.figma.com/img/d0c1/3ace/f719ec8806ea906f47143c2b20b269d5?Expires=1702252800&Signature=SHCBG4KokAtTlU6tjr4b-ZUx1tbqkBTKSrC93an5KN0LmKCoWgLaLPE-8CjDnScl1e8iVvP74Ajd6rKthGHaCw34et4TqoVAdYaDcb3BYbRHNM~9vcUVY1Vsy1goatiPE-VJVdMsBfx--nre2Oh~WPPqgF0DSrpUFsgzrRKTEUj2aieFRPu3xj5mGcCiWSaSMoXXg-y62J1ZTncHNs-MYbnOy-Kpe9VMcoFcF5BOOYZRBdnWTDQJXyLGwKsSYGJIrLV0XVFEEUuP1mnCIEhR33J7ogt3loIoGlYoBYgiCus7TWc9hbZnqM5fBcWHs31PhZXYJSDC2KdoDo9tF613gg__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4") 50%;
-    background-size: cover;
-    display: flex;
-    height: 200px;
-    justify-content: center;
-    align-items: center;
-    flex-shrink: 0;
-  }
-
-  .title-center {
-    text-align: center;
-    margin: 0 auto;
-    margin-top: 20px;
-    margin-bottom: 50px;
-  }
-  
-  /* Center the form */
-  .center-form {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh; 
-  }
-
-  form {
-    max-width: 600px; 
-    width: 100%;
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-  }
-
-  footer {
-    position: absolute;
-    bottom: 0;
-    text-align: center;
-    padding: 10px 0;
-    width: 100%;
+      background: url("https://s3-alpha-sig.figma.com/img/d0c1/3ace/f719ec8806ea906f47143c2b20b269d5?Expires=1702252800&Signature=SHCBG4KokAtTlU6tjr4b-ZUx1tbqkBTKSrC93an5KN0LmKCoWgLaLPE-8CjDnScl1e8iVvP74Ajd6rKthGHaCw34et4TqoVAdYaDcb3BYbRHNM~9vcUVY1Vsy1goatiPE-VJVdMsBfx--nre2Oh~WPPqgF0DSrpUFsgzrRKTEUj2aieFRPu3xj5mGcCiWSaSMoXXg-y62J1ZTncHNs-MYbnOy-Kpe9VMcoFcF5BOOYZRBdnWTDQJXyLGwKsSYGJIrLV0XVFEEUuP1mnCIEhR33J7ogt3loIoGlYoBYgiCus7TWc9hbZnqM5fBcWHs31PhZXYJSDC2KdoDo9tF613gg__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4") 50%;
+      background-size: cover;
+      display: flex;
+      height: 200px;
+      justify-content: center;
+      align-items: center;
+      flex-shrink: 0;
   }
 </style>
 
@@ -124,7 +129,7 @@
   <!-- if you choose to use CDN for CSS bootstrap -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
     integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
-
+ <script defer src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
 </head>
 
 <body>
@@ -156,8 +161,8 @@
   
 
   <!-- main page content -->
-  <div class="container-fluid">
-    <h2 class="title-center">Create Recipe</h2>
+  <div class="container mt-4">
+    <h2>Create Recipe</h2>
     <!-- Recipe Creation Form -->
     <div class="center-form">
       <form action="createRecipe.php" method="post">
@@ -174,6 +179,7 @@
           <label for="recipe_description">Description:</label>
           <textarea name="recipe_description" rows="4" class="form-control" required></textarea>
         </div>
+        </br>
         <!-- end description -->
 
         <!-- Ingredients section -->
@@ -213,10 +219,11 @@
               <option value="quarter">quarter</option>
             </select>
             <br>
-
+            <br>
             <button class="btn btn-primary" type="button" onclick="addIngredient()">Add Ingredient</button>
           </div>
         </div>
+        <br/>
         <!-- end ingredients -->
 
         <!-- Directions section -->
@@ -230,6 +237,7 @@
             <button class="btn btn-primary" type="button" onclick="addDirection()">Add Instruction</button>
           </div>
         </div>
+        <br/>
         <!-- end directions -->
 
         <!-- Tags section -->
@@ -245,11 +253,13 @@
                 <option value="country of origin">Country of Origin</option>
                 <option value="category">Category</option>
             </select>
-            <br>
-
+            <br/>
+            <br/>
             <button class="btn btn-primary" type="button" onclick="addTag()">Add Tag</button>
           </div>
         </div>
+        <br/>
+        <br/>
         <!-- End tags -->
 
         <button class="btn btn-success" type="submit">Create Recipe</button>
