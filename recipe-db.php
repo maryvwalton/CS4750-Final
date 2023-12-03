@@ -127,17 +127,33 @@ function insertInstruction($recipeId, $instruction)
     $statement->closeCursor();
 }
 
-function createdBy ($recipeId, $userId) {
+function createdBy($recipeId, $userId)
+{
     global $db;
-    $query = "INSERT INTO created_by (recipe_id, user_id) VALUES (:recipeID, :userID)";
 
-    $statement = $db->prepare($query);
-    $statement->bindValue(':recipeID', $recipeId);
-    $statement->bindValue(':userID', $userId);
-    $statement->execute();
+    // Retrieve current recipesCreated value
+    $currentRecipesCreated = $db->query("SELECT recipesCreated FROM user_stats WHERE user_id = $userId")->fetchColumn();
 
-    $statement->closeCursor();
+    // Increment the value
+    $newRecipesCreated = $currentRecipesCreated + 1;
+
+    // Update user_stats table
+    $updateQuery = "UPDATE user_stats SET recipesCreated = :newRecipesCreated WHERE user_id = :userId";
+    $updateStatement = $db->prepare($updateQuery);
+    $updateStatement->bindValue(':newRecipesCreated', $newRecipesCreated);
+    $updateStatement->bindValue(':userId', $userId);
+    $updateStatement->execute();
+    $updateStatement->closeCursor();
+
+    // Insert into created_by table
+    $insertQuery = "INSERT INTO created_by (recipe_id, user_id) VALUES (:recipeID, :userID)";
+    $insertStatement = $db->prepare($insertQuery);
+    $insertStatement->bindValue(':recipeID', $recipeId);
+    $insertStatement->bindValue(':userID', $userId);
+    $insertStatement->execute();
+    $insertStatement->closeCursor();
 }
+
 
 function insertTag($recipeId, $tagName, $tagType) {
     global $db;
