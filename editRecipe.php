@@ -1,3 +1,128 @@
+<?php
+    require("connect-db.php");
+    require("recipe-db.php");
+
+    error_reporting(E_ALL);
+    ini_set('display_errors', '1');
+    session_start();
+
+    if (!isset($_SESSION['user_id'])) {
+        header("Location: index.html");
+        exit();
+    }
+
+    if ($_SERVER["REQUEST_METHOD"] == "POST") {
+        if (isset($_GET['recipe_id'])) {
+            $recipeId = $_GET['recipe_id'];
+            
+            $recipe_title = $_POST["recipe_title"];
+            $recipe_description = $_POST["recipe_description"];
+
+            // Update recipe details
+            $updateRecipeQuery = "UPDATE recipe SET title = :title, description = :description WHERE recipe_id = :recipe_id";
+            $statementUpdateRecipe = $db->prepare($updateRecipeQuery);
+            $statementUpdateRecipe->bindValue(':title', $recipe_title);
+            $statementUpdateRecipe->bindValue(':description', $recipe_description);
+            $statementUpdateRecipe->bindValue(':recipe_id', $recipeId);
+            $statementUpdateRecipe->execute();
+            $statementUpdateRecipe->closeCursor();
+
+            // ...
+
+            // Update instructions
+            if (isset($_POST['direction_ids']) && isset($_POST['instructions'])) {
+                $instructionIds = $_POST['direction_ids'];
+                $newInstructions = $_POST['instructions'];
+
+                foreach ($instructionIds as $index => $instructionId) {
+                    $newInstruction = $newInstructions[$index];
+                    $updateInstructionQuery = "UPDATE recipe_directions SET instruction = :instruction WHERE direction_id = :direction_id";
+                    $statementUpdateInstruction = $db->prepare($updateInstructionQuery);
+                    $statementUpdateInstruction->bindValue(':instruction', $newInstruction);
+                    $statementUpdateInstruction->bindValue(':direction_id', $instructionId);
+                    $statementUpdateInstruction->execute();
+                    // If the update didn't work, you can debug by checking for errors here:
+                    // var_dump($statementUpdateInstruction->errorInfo());
+                    $statementUpdateInstruction->closeCursor();
+                }
+            }
+    // ...
+
+
+            // Update ingredients and their amounts
+            if (
+                isset($_POST['ingredient_ids']) &&
+                isset($_POST['ingredient_names']) &&
+                isset($_POST['ingredient_amounts']) &&
+                isset($_POST['ingredient_units']) &&
+                isset($_POST['recipe_id'])
+            ) {
+                $ingredientIds = $_POST['ingredient_ids'];
+                $newIngredientNames = $_POST['ingredient_names'];
+                $newIngredientAmounts = $_POST['ingredient_amounts'];
+
+                foreach ($ingredientIds as $index => $ingredientId) {
+                    $newIngredientName = $newIngredientNames[$index];
+                    $newIngredientAmount = $newIngredientAmounts[$index];
+
+                    // Update ingredient name
+                    $updateIngredientNameQuery = "UPDATE recipe_ingredients SET ingredient_name = :ingredient_name WHERE ingredient_id = :ingredient_id";
+                    $statementUpdateIngredientName = $db->prepare($updateIngredientNameQuery);
+                    $statementUpdateIngredientName->bindValue(':ingredient_name', $newIngredientName);
+                    $statementUpdateIngredientName->bindValue(':ingredient_id', $ingredientId);
+                    $statementUpdateIngredientName->execute();
+                    $statementUpdateIngredientName->closeCursor();
+
+                    // Update ingredient amount and unit
+                    $updateAmountQuery = "UPDATE ingredients_amounts SET value = :value, unit = :unit WHERE ingredient_id = :ingredient_id AND recipe_id = :recipe_id";
+                    $statementUpdateAmount = $db->prepare($updateAmountQuery);
+                    $statementUpdateAmount->bindValue(':value', $newIngredientAmount);
+                    $statementUpdateAmount->bindValue(':unit', $newIngredientUnit);
+                    $statementUpdateAmount->bindValue(':ingredient_id', $ingredientId);
+                    $statementUpdateAmount->bindValue(':recipe_id', $recipeId);
+                    $statementUpdateAmount->execute();
+                    $statementUpdateAmount->closeCursor();
+                }
+            }
+
+    // ...
+
+            // Update tags
+            // ... (Update tags code, similar to instructions and ingredients)
+            // Update tags
+        if (isset($_POST['tag_ids']) && isset($_POST['tag_names']) && isset($_POST['tag_types'])) {
+            $tagIds = $_POST['tag_ids'];
+            $newTagNames = $_POST['tag_names'];
+            $newTagTypes = $_POST['tag_types'];
+
+            foreach ($tagIds as $index => $tagId) {
+                $newTagName = $newTagNames[$index];
+                $newTagType = $newTagTypes[$index];
+
+                updateTag($tagId, $newTagName, $newTagType); // Call function to update tag
+            }
+        }
+
+            header("Location: recipe_details.php?recipe_id=" . $recipeId);
+            exit();
+        }
+    }
+
+    if (isset($_GET['recipe_id'])) {
+        $recipeId = $_GET['recipe_id'];
+        $currentRecipe = getRecipeById($recipeId);
+
+        if (!$currentRecipe) {
+            echo "Recipe not found.";
+            exit();
+        }
+    } else {
+        echo "Recipe ID not provided.";
+        exit();
+    }
+?>
+
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -45,143 +170,36 @@
         }
     </style>
 </head>
+
 <body>
-</body>
-</html>
-
-<?php
-require("connect-db.php");
-require("recipe-db.php");
-
-error_reporting(E_ALL);
-ini_set('display_errors', '1');
-session_start();
-
-if (!isset($_SESSION['user_id'])) {
-    header("Location: index.html");
-    exit();
-}
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    if (isset($_GET['recipe_id'])) {
-        $recipeId = $_GET['recipe_id'];
-        
-        $recipe_title = $_POST["recipe_title"];
-        $recipe_description = $_POST["recipe_description"];
-
-        // Update recipe details
-        $updateRecipeQuery = "UPDATE recipe SET title = :title, description = :description WHERE recipe_id = :recipe_id";
-        $statementUpdateRecipe = $db->prepare($updateRecipeQuery);
-        $statementUpdateRecipe->bindValue(':title', $recipe_title);
-        $statementUpdateRecipe->bindValue(':description', $recipe_description);
-        $statementUpdateRecipe->bindValue(':recipe_id', $recipeId);
-        $statementUpdateRecipe->execute();
-        $statementUpdateRecipe->closeCursor();
-
-        // ...
-
-        // Update instructions
-        if (isset($_POST['direction_ids']) && isset($_POST['instructions'])) {
-            $instructionIds = $_POST['direction_ids'];
-            $newInstructions = $_POST['instructions'];
-
-            foreach ($instructionIds as $index => $instructionId) {
-                $newInstruction = $newInstructions[$index];
-                $updateInstructionQuery = "UPDATE recipe_directions SET instruction = :instruction WHERE direction_id = :direction_id";
-                $statementUpdateInstruction = $db->prepare($updateInstructionQuery);
-                $statementUpdateInstruction->bindValue(':instruction', $newInstruction);
-                $statementUpdateInstruction->bindValue(':direction_id', $instructionId);
-                $statementUpdateInstruction->execute();
-                // If the update didn't work, you can debug by checking for errors here:
-                // var_dump($statementUpdateInstruction->errorInfo());
-                $statementUpdateInstruction->closeCursor();
-            }
-        }
-// ...
+    <!-- Navigation bar KEEP -->
+    <nav class="navbar navbar-expand-lg bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand text-black">Chef Your Way</a>
+            <a class=nav-link href="search.php">Search</a>
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item"> 
+                    <a class="nav-link" href="profile.php">Profile</a>
+                </li>
+                <li class="nav-item">
+                <a class="nav-link" href="logout.php">Logout</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <!-- end navigation bar -->
 
 
-        // Update ingredients and their amounts
-        if (
-            isset($_POST['ingredient_ids']) &&
-            isset($_POST['ingredient_names']) &&
-            isset($_POST['ingredient_amounts']) &&
-            isset($_POST['ingredient_units']) &&
-            isset($_POST['recipe_id'])
-        ) {
-            $ingredientIds = $_POST['ingredient_ids'];
-            $newIngredientNames = $_POST['ingredient_names'];
-            $newIngredientAmounts = $_POST['ingredient_amounts'];
+    <!-- Banner KEEP -->
+    <div class="banner">
+        <div class="text-center">
+            <h1 class="text-white">Find delicious recipes for any occasion!</h1>
+        </div>
+    </div>
+    <!-- end banner -->
 
-            foreach ($ingredientIds as $index => $ingredientId) {
-                $newIngredientName = $newIngredientNames[$index];
-                $newIngredientAmount = $newIngredientAmounts[$index];
-
-                // Update ingredient name
-                $updateIngredientNameQuery = "UPDATE recipe_ingredients SET ingredient_name = :ingredient_name WHERE ingredient_id = :ingredient_id";
-                $statementUpdateIngredientName = $db->prepare($updateIngredientNameQuery);
-                $statementUpdateIngredientName->bindValue(':ingredient_name', $newIngredientName);
-                $statementUpdateIngredientName->bindValue(':ingredient_id', $ingredientId);
-                $statementUpdateIngredientName->execute();
-                $statementUpdateIngredientName->closeCursor();
-
-                // Update ingredient amount and unit
-                $updateAmountQuery = "UPDATE ingredients_amounts SET value = :value, unit = :unit WHERE ingredient_id = :ingredient_id AND recipe_id = :recipe_id";
-                $statementUpdateAmount = $db->prepare($updateAmountQuery);
-                $statementUpdateAmount->bindValue(':value', $newIngredientAmount);
-                $statementUpdateAmount->bindValue(':unit', $newIngredientUnit);
-                $statementUpdateAmount->bindValue(':ingredient_id', $ingredientId);
-                $statementUpdateAmount->bindValue(':recipe_id', $recipeId);
-                $statementUpdateAmount->execute();
-                $statementUpdateAmount->closeCursor();
-            }
-        }
-
-// ...
-
-        // Update tags
-        // ... (Update tags code, similar to instructions and ingredients)
-        // Update tags
-    if (isset($_POST['tag_ids']) && isset($_POST['tag_names']) && isset($_POST['tag_types'])) {
-        $tagIds = $_POST['tag_ids'];
-        $newTagNames = $_POST['tag_names'];
-        $newTagTypes = $_POST['tag_types'];
-
-        foreach ($tagIds as $index => $tagId) {
-            $newTagName = $newTagNames[$index];
-            $newTagType = $newTagTypes[$index];
-
-            updateTag($tagId, $newTagName, $newTagType); // Call function to update tag
-        }
-    }
-
-        header("Location: recipe_details.php?recipe_id=" . $recipeId);
-        exit();
-    }
-}
-
-if (isset($_GET['recipe_id'])) {
-    $recipeId = $_GET['recipe_id'];
-    $currentRecipe = getRecipeById($recipeId);
-
-    if (!$currentRecipe) {
-        echo "Recipe not found.";
-        exit();
-    }
-} else {
-    echo "Recipe ID not provided.";
-    exit();
-}
-?>
-
-<!DOCTYPE html>
-<html>
-<head>
-    <!-- Add your head content here -->
-</head>
-<body>
-    <!-- Navigation bar -->
-    <!-- Add your navigation bar code here -->
-
+    
+    <!-- edit form -->
     <div class="container mt-4">
         <h2>Edit Recipe</h2>
         <form method="POST" action="editrecipe.php?recipe_id=<?php echo $recipeId; ?>">
@@ -287,10 +305,16 @@ if (isset($_GET['recipe_id'])) {
             <button type="submit" class="btn btn-primary">Update Recipe</button>
         </form>
     </div>
+    <!-- end edit form -->
 
-    <!-- Footer -->
-    <!-- Add your footer code here -->
 
-    <!-- Add your script includes here -->
+    <!-- Copyright Footer KEEP -->
+    <br>
+    <footer class="text-center text-lg-start" style="background-color: #AFCFFF">
+        <div class="text-center p-3">
+        © 2023 Copyright: Chef Your Way
+        </div>
+    </footer>
+    <!-- end footer -->
 </body>
 </html>
