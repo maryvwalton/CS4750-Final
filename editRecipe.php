@@ -67,8 +67,6 @@
 
                 foreach ($ingredientIds as $index => $ingredientId) {
                     $newIngredientAmount = $newIngredientAmounts[$index];
-
-                    // Update ingredient amount and unit
                     updateIngredientAmount($ingredientId, $newIngredientAmount);
                 }
             }
@@ -83,13 +81,10 @@
 
                 foreach ($ingredientIds as $index => $ingredientId) {
                     $newIngredientUnit = $newIngredientUnits[$index]; // Get the corresponding unit for the ingredient
-
-                    // Update unit
                     updateIngredientUnit($ingredientId, $newIngredientUnit);
                 }
             }
             
-
 
         // Update tags
         if (isset($_POST['tag_ids']) && isset($_POST['tag_names']) && isset($_POST['tag_types'])) {
@@ -100,8 +95,7 @@
             foreach ($tagIds as $index => $tagId) {
                 $newTagName = $newTagNames[$index];
                 $newTagType = $newTagTypes[$index];
-
-                updateTag($tagId, $newTagName, $newTagType); // Call function to update tag
+                updateTag($tagId, $newTagName, $newTagType); 
             }
         }
 
@@ -258,7 +252,7 @@
                 foreach ($ingredientAmounts as $amount) {
                     if ($amount['ingredient_id'] === $ingredient['ingredient_id']) {
                         $currentAmount = $amount;
-                        $currentUnit = $amount['unit']; // Fetch the current unit
+                        $currentUnit = $amount['unit']; 
                         break;
                     }
                 }
@@ -267,7 +261,7 @@
                 <div class="mb-3">
                     <label for="ingredient_name" class="form-label">Ingredient Name:</label>
                     <input type="text" class="form-control" name="ingredient_names[]" value="<?php echo htmlspecialchars($ingredient['ingredient_name']); ?>">
-                    <!-- Adding input field for ingredient amounts -->
+                    <!-- Input field for ingredient amounts -->
                     <label for="amount">Amount:</label>
                     <input type="number" class="form-control" name="ingredient_amounts[]" value="<?php echo $currentAmount ? htmlspecialchars($currentAmount['value']) : ''; ?>">
 
